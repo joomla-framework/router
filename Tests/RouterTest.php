@@ -226,21 +226,21 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 			array('', true, array(), 1),
 			array('articles/4', true, array(), 1),
 			array('', true, array(), 2),
-			array('login', false, array('controller' => 'LoginController', 'vars' => array('_rawRoute' => 'login')), 2),
-			array('articles', false, array('controller' => 'ArticlesController', 'vars' => array('_rawRoute' => 'articles')), 2),
-			array('articles/4', false, array('controller' => 'ArticleController', 'vars' => array('article_id' => 4, '_rawRoute' => 'articles/4')), 2),
+			array('login', false, array('controller' => 'LoginController', 'vars' => array()), 2),
+			array('articles', false, array('controller' => 'ArticlesController', 'vars' => array()), 2),
+			array('articles/4', false, array('controller' => 'ArticleController', 'vars' => array('article_id' => 4)), 2),
 			array('articles/4/crap', true, array(), 2),
 			array('test', true, array(), 2),
 			array('test/foo', true, array(), 2),
 			array('test/foo/path', true, array(), 2),
-			array('test/foo/path/bar', false, array('controller' => 'TestController', 'vars' => array('seg1' => 'foo', 'seg2' => 'bar', '_rawRoute' => 'test/foo/path/bar')), 2),
-			array('content/article-1/*', false, array('controller' => 'ContentController', 'vars' => array('_rawRoute' => 'content/article-1/*')), 2),
+			array('test/foo/path/bar', false, array('controller' => 'TestController', 'vars' => array('seg1' => 'foo', 'seg2' => 'bar')), 2),
+			array('content/article-1/*', false, array('controller' => 'ContentController', 'vars' => array()), 2),
 			array('content/cat-1/article-1', false,
-				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1', 'article' => 'article-1', '_rawRoute' => 'content/cat-1/article-1')), 2),
+				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1', 'article' => 'article-1')), 2),
 			array('content/cat-1/cat-2/article-1', false,
-				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1/cat-2', 'article' => 'article-1', '_rawRoute' => 'content/cat-1/cat-2/article-1')), 2),
+				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1/cat-2', 'article' => 'article-1')), 2),
 			array('content/cat-1/cat-2/cat-3/article-1', false,
-				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1/cat-2/cat-3', 'article' => 'article-1', '_rawRoute' => 'content/cat-1/cat-2/cat-3/article-1')), 2)
+				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1/cat-2/cat-3', 'article' => 'article-1')), 2)
 		);
 	}
 

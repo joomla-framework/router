@@ -181,8 +181,6 @@ class Router
 					$vars[$var] = $matches[$i + 1];
 				}
 
-				$vars['_rawRoute'] = $route;
-
 				return array(
 					'controller' => $rule['controller'],
 					'vars' => $vars
