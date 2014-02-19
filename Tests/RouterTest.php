@@ -48,7 +48,18 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function test__construct()
 	{
-		$this->assertAttributeEmpty('maps', $this->instance);
+		$emptyRoutes = array(
+			'GET' => array(),
+			'PUT' => array(),
+			'POST' => array(),
+			'DELETE' => array(),
+			'HEAD' => array(),
+			'OPTIONS' => array(),
+			'TRACE' => array(),
+			'PATCH' => array()
+		);
+
+		$this->assertAttributeEquals($emptyRoutes, 'routes', $this->instance);
 	}
 
 	/**
@@ -61,7 +72,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function test__constructNotEmpty()
 	{
-		$maps = array(
+		$routes = array(
 			array(
 				'pattern' => 'login',
 				'controller' => 'login'
@@ -76,25 +87,27 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 		);
 
 		$rules = array(
-			array(
-				'regex' => chr(1) . '^login$' . chr(1),
-				'vars' => array(),
-				'controller' => 'login'
-			),
-			array(
-				'regex' => chr(1) . '^requests/(\d+)$' . chr(1),
-				'vars' => array('request_id'),
-				'controller' => 'request'
+			'GET' => array(
+				array(
+					'regex' => chr(1) . '^login$' . chr(1),
+					'vars' => array(),
+					'controller' => 'login'
+				),
+				array(
+					'regex' => chr(1) . '^requests/(\d+)$' . chr(1),
+					'vars' => array('request_id'),
+					'controller' => 'request'
+				)
 			)
 		);
 
-		$router = new Router($maps);
+		$router = new Router($routes);
 
 		$this->assertAttributeEquals(
-			 $rules,
-				 'maps',
-				 $router,
-				 'When passing an array of routes when instantiating a Router, the maps property should be set accordingly.'
+			$rules,
+			'routes',
+			$router,
+			'When passing an array of routes when instantiating a Router, the maps property should be set accordingly.'
 		);
 	}
 
@@ -106,20 +119,21 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	 * @covers  Joomla\Router\Router::addMap
 	 * @since   1.0
 	 */
-	public function testAddMap()
+	public function testAddRoute()
 	{
-		$this->assertAttributeEmpty('maps', $this->instance);
-		$this->instance->addMap('foo', 'MyApplicationFoo');
+		$this->instance->addRoute('GET', 'foo', 'MyApplicationFoo');
 		$this->assertAttributeEquals(
-			 array(
-				 array(
-					 'regex' => chr(1) . '^foo$' . chr(1),
-					 'vars' => array(),
-					 'controller' => 'MyApplicationFoo'
-				 )
-			 ),
-				 'maps',
-				 $this->instance
+			array(
+				'GET' => array(
+					array(
+						'regex' => chr(1) . '^foo$' . chr(1),
+						'vars' => array(),
+						'controller' => 'MyApplicationFoo'
+					)
+				)
+			),
+			'routes',
+			$this->instance
 		);
 	}
 
@@ -131,9 +145,9 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	 * @covers  Joomla\Router\Router::addMaps
 	 * @since   1.0
 	 */
-	public function testAddMaps()
+	public function testAddRoutes()
 	{
-		$maps = array(
+		$routes = array(
 			array(
 				'pattern' => 'login',
 				'controller' => 'login'
@@ -155,29 +169,32 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 		);
 
 		$rules = array(
-			array(
-				'regex' => chr(1) . '^login$' . chr(1),
-				'vars' => array(),
-				'controller' => 'login'
-			),
-			array(
-				'regex' => chr(1) . '^user/([^/]*)/(\d+)$' . chr(1),
-				'vars' => array(
-					'name',
-					'id'
+			'GET' => array(
+				array(
+					'regex' => chr(1) . '^login$' . chr(1),
+					'vars' => array(),
+					'controller' => 'login'
 				),
-				'controller' => 'UserController'
-			),
-			array(
-				'regex' => chr(1) . '^requests/(\d+)$' . chr(1),
-				'vars' => array('request_id'),
-				'controller' => 'request'
+				array(
+					'regex' => chr(1) . '^user/([^/]*)/(\d+)$' . chr(1),
+					'vars' => array(
+						'name',
+						'id'
+					),
+					'controller' => 'UserController'
+				),
+				array(
+					'regex' => chr(1) . '^requests/(\d+)$' . chr(1),
+					'vars' => array('request_id'),
+					'controller' => 'request'
+				)
 			)
 		);
 
-		$this->assertAttributeEmpty('maps', $this->instance);
-		$this->instance->addMaps($maps);
-		$this->assertAttributeEquals($rules, 'maps', $this->instance);
+		$this->instance->addRoutes($routes);
+		$this->assertAttributeEquals($rules, 'routes', $this->instance);
+
+		$this->instance->get();
 	}
 
 	/**
@@ -197,7 +214,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	public function testParseRoute($r, $e, $i, $m)
 	{
 		// Setup the router maps.
-		$this->{'setMaps' . $m}();
+		$this->{'setRoutes' . $m}();
 
 		// If we should expect an exception set that up.
 		if ($e)
@@ -253,9 +270,9 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @since   1.0
 	 */
-	protected function setMaps1()
+	protected function setRoutes1()
 	{
-		$this->instance->addMaps(array());
+		$this->instance->addRoutes(array());
 	}
 
 	/**
@@ -265,9 +282,9 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @since   1.0
 	 */
-	protected function setMaps2()
+	protected function setRoutes2()
 	{
-		$this->instance->addMaps(
+		$this->instance->addRoutes(
 			array(
 				array(
 				   'pattern' => 'login',

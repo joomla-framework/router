@@ -16,13 +16,27 @@ namespace Joomla\Router;
 class Router
 {
 	/**
-	 * An array of rules, each rule being an associative array('regex'=> $regex, 'vars' => $vars, 'controller' => $controller)
-	 * for routing the request.
+	 * An array of rules, each rule being an associative for routing the request.
+	 *
+	 * Example: array(
+	 *              'regex' => $regex,
+	 *              'vars' => $vars,
+	 *              'controller' => $controller
+	 *          )
 	 *
 	 * @var    array
 	 * @since  1.0
 	 */
-	protected $maps = array();
+	public $routes = array(
+		'GET' => array(),
+		'PUT' => array(),
+		'POST' => array(),
+		'DELETE' => array(),
+		'HEAD' => array(),
+		'OPTIONS' => array(),
+		'TRACE' => array(),
+		'PATCH' => array()
+	);
 
 	/**
 	 * Constructor.
@@ -35,22 +49,45 @@ class Router
 	{
 		if (! empty($maps))
 		{
-			$this->addMaps($maps);
+			$this->addRoutes($maps);
 		}
 	}
 
 	/**
-	 * Add a route map to the router. If the pattern already exists it will be overwritten.
+	 * Add a route of the specified method to the router. If the pattern already exists it will be overwritten.
 	 *
+	 * @param   string  $method      Request method to match. One of GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE or PATCH
 	 * @param   string  $pattern     The route pattern to use for matching.
 	 * @param   mixed   $controller  The controller to map to the given pattern.
-	 * @parem   array   $rules       An array of regex rules keyed using the route variables.
+	 * @param   array   $rules       An array of regex rules keyed using the named route variables.
 	 *
 	 * @return  Router  Returns itself to support chaining.
 	 *
 	 * @since   1.0
 	 */
-	public function addMap($pattern, $controller, array $rules = array())
+	public function addRoute($method = 'GET', $pattern, $controller, array $rules = array())
+	{
+		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
+
+		$this->routes[strtoupper($method)][] = array(
+			'regex' => $regex,
+			'vars' => $vars,
+			'controller' => $controller
+		);
+
+		return $this;
+	}
+
+	/**
+	 * Parse the given pattern to extract the named variables and build
+	 * a proper regular expression for use when parsing the routes.
+	 *
+	 * @param   string  $pattern  The route pattern to use for matching.
+	 * @param   array   $rules    An array of regex rules keyed using the named route variables.
+	 *
+	 * @return  array
+	 */
+	protected function buildRegexAndVarList($pattern, array $rules = array())
 	{
 		// Sanitize and explode the pattern.
 		$pattern = explode('/', trim(parse_url((string) $pattern, PHP_URL_PATH), ' /'));
@@ -105,19 +142,16 @@ class Router
 			}
 		}
 
-		$this->maps[] = array(
-			'regex' => chr(1) . '^' . implode('/', $regex) . '$' . chr(1),
-			'vars' => $vars,
-			'controller' => $controller
+		return array(
+			chr(1) . '^' . implode('/', $regex) . '$' . chr(1),
+			$vars
 		);
-
-		return $this;
 	}
 
 	/**
 	 * Add an array of route maps to the router.  If the pattern already exists it will be overwritten.
 	 *
-	 * @param   array  $maps  A list of route maps to add to the router as $pattern => $controller.
+	 * @param   array  $routes  A list of route maps to add to the router as $pattern => $controller.
 	 *
 	 * @return  Router  Returns itself to support chaining.
 	 *
@@ -125,26 +159,27 @@ class Router
 	 *
 	 * @since   1.0
 	 */
-	public function addMaps($maps)
+	public function addRoutes(array $routes)
 	{
-		foreach ($maps as $map)
+		foreach ($routes as $route)
 		{
 			// Ensure a `pattern` key exists
-			if (! array_key_exists('pattern', $map))
+			if (! array_key_exists('pattern', $route))
 			{
 				throw new \UnexpectedValueException('Route map must contain a pattern variable.');
 			}
 
 			// Ensure a `controller` key exists
-			if (! array_key_exists('controller', $map))
+			if (! array_key_exists('controller', $route))
 			{
 				throw new \UnexpectedValueException('Route map must contain a controller variable.');
 			}
 
 			// If rules have been specified, add them as well.
-			$rules = array_key_exists('rules', $map) ? $map['rules'] : array();
+			$rules = array_key_exists('rules', $route) ? $route['rules'] : array();
+			$method = array_key_exists('method', $route) ? $route['method'] : 'GET';
 
-			$this->addMap($map['pattern'], $map['controller'], $rules);
+			$this->addRoute($method, $route['pattern'], $route['controller'], $rules);
 		}
 
 		return $this;
@@ -153,14 +188,15 @@ class Router
 	/**
 	 * Parse the given route and return the name of a controller mapped to the given route.
 	 *
-	 * @param   string  $route  The route string for which to find and execute a controller.
+	 * @param   string  $route   The route string for which to find and execute a controller.
+	 * @param   string  $method  Request method to match. One of GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE or PATCH
 	 *
 	 * @return  array   An array containing the controller and the matched variables.
 	 *
 	 * @since   1.0
 	 * @throws  \InvalidArgumentException
 	 */
-	public function parseRoute($route)
+	public function parseRoute($route, $method = 'GET')
 	{
 		// Trim the query string off.
 		$route = preg_replace('/([^?]*).*/u', '\1', $route);
@@ -168,8 +204,8 @@ class Router
 		// Sanitize and explode the route.
 		$route = trim(parse_url($route, PHP_URL_PATH), ' /');
 
-		// Iterate through all of the known route maps looking for a match.
-		foreach ($this->maps as $rule)
+		// Iterate through all of the known routes looking for a match.
+		foreach ($this->routes[strtoupper($method)] as $rule)
 		{
 			if (preg_match($rule['regex'], $route, $matches))
 			{
@@ -189,5 +225,160 @@ class Router
 		}
 
 		throw new \InvalidArgumentException(sprintf('Unable to handle request for route `%s`.', $route), 404);
+	}
+
+	/**
+	 * Add a GET route to the router. If the pattern already exists it will be overwritten.
+	 *
+	 * @param   string  $pattern     The route pattern to use for matching.
+	 * @param   mixed   $controller  The controller to map to the given pattern.
+	 * @param   array   $rules       An array of regex rules keyed using the route variables.
+	 *
+	 * @return  Router  Returns itself to support chaining.
+	 *
+	 * @since   1.0
+	 */
+	public function get($pattern, $controller, array $rules = array())
+	{
+		$this->addRoute('GET', $pattern, $controller, $rules);
+	}
+
+	/**
+	 * Add a POST route to the router. If the pattern already exists it will be overwritten.
+	 *
+	 * @param   string  $pattern     The route pattern to use for matching.
+	 * @param   mixed   $controller  The controller to map to the given pattern.
+	 * @param   array   $rules       An array of regex rules keyed using the route variables.
+	 *
+	 * @return  Router  Returns itself to support chaining.
+	 *
+	 * @since   1.0
+	 */
+	public function post($pattern, $controller, array $rules = array())
+	{
+		$this->addRoute('POST', $pattern, $controller, $rules);
+	}
+
+	/**
+	 * Add a PUT route to the router. If the pattern already exists it will be overwritten.
+	 *
+	 * @param   string  $pattern     The route pattern to use for matching.
+	 * @param   mixed   $controller  The controller to map to the given pattern.
+	 * @param   array   $rules       An array of regex rules keyed using the route variables.
+	 *
+	 * @return  Router  Returns itself to support chaining.
+	 *
+	 * @since   1.0
+	 */
+	public function put($pattern, $controller, array $rules = array())
+	{
+		$this->addRoute('PUT', $pattern, $controller, $rules);
+	}
+
+	/**
+	 * Add a DELETE route to the router. If the pattern already exists it will be overwritten.
+	 *
+	 * @param   string  $pattern     The route pattern to use for matching.
+	 * @param   mixed   $controller  The controller to map to the given pattern.
+	 * @param   array   $rules       An array of regex rules keyed using the route variables.
+	 *
+	 * @return  Router  Returns itself to support chaining.
+	 *
+	 * @since   1.0
+	 */
+	public function delete($pattern, $controller, array $rules = array())
+	{
+		$this->addRoute('DELETE', $pattern, $controller, $rules);
+	}
+
+	/**
+	 * Add a HEAD route to the router. If the pattern already exists it will be overwritten.
+	 *
+	 * @param   string  $pattern     The route pattern to use for matching.
+	 * @param   mixed   $controller  The controller to map to the given pattern.
+	 * @param   array   $rules       An array of regex rules keyed using the route variables.
+	 *
+	 * @return  Router  Returns itself to support chaining.
+	 *
+	 * @since   1.0
+	 */
+	public function head($pattern, $controller, array $rules = array())
+	{
+		$this->addRoute('HEAD', $pattern, $controller, $rules);
+	}
+
+	/**
+	 * Add a OPTIONS route to the router. If the pattern already exists it will be overwritten.
+	 *
+	 * @param   string  $pattern     The route pattern to use for matching.
+	 * @param   mixed   $controller  The controller to map to the given pattern.
+	 * @param   array   $rules       An array of regex rules keyed using the route variables.
+	 *
+	 * @return  Router  Returns itself to support chaining.
+	 *
+	 * @since   1.0
+	 */
+	public function options($pattern, $controller, array $rules = array())
+	{
+		$this->addRoute('OPTIONS', $pattern, $controller, $rules);
+	}
+
+	/**
+	 * Add a TRACE route to the router. If the pattern already exists it will be overwritten.
+	 *
+	 * @param   string  $pattern     The route pattern to use for matching.
+	 * @param   mixed   $controller  The controller to map to the given pattern.
+	 * @param   array   $rules       An array of regex rules keyed using the route variables.
+	 *
+	 * @return  Router  Returns itself to support chaining.
+	 *
+	 * @since   1.0
+	 */
+	public function trace($pattern, $controller, array $rules = array())
+	{
+		return $this->addRoute('TRACE', $pattern, $controller, $rules);
+	}
+
+	/**
+	 * Add a PATCH route to the router. If the pattern already exists it will be overwritten.
+	 *
+	 * @param   string  $pattern     The route pattern to use for matching.
+	 * @param   mixed   $controller  The controller to map to the given pattern.
+	 * @param   array   $rules       An array of regex rules keyed using the route variables.
+	 *
+	 * @return  Router  Returns itself to support chaining.
+	 *
+	 * @since   1.0
+	 */
+	public function patch($pattern, $controller, array $rules = array())
+	{
+		return $this->addRoute('PATCH', $pattern, $controller, $rules);
+	}
+
+	/**
+	 * Add a UNIVERSAL (catchall) route to the router. If the pattern already exists it will be overwritten.
+	 *
+	 * @param   string  $pattern     The route pattern to use for matching.
+	 * @param   mixed   $controller  The controller to map to the given pattern.
+	 * @param   array   $rules       An array of regex rules keyed using the route variables.
+	 *
+	 * @return  Router  Returns itself to support chaining.
+	 *
+	 * @since   1.0
+	 */
+	public function all($pattern, $controller, array $rules = array())
+	{
+		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
+
+		foreach ($this->routes as $method => $routes)
+		{
+			$this->routes[$method][] = array(
+				'regex' => $regex,
+				'vars' => $vars,
+				'controller' => $controller
+			);
+		}
+
+		return $this;
 	}
 }
