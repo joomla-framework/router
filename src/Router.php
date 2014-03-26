@@ -8,12 +8,14 @@
 
 namespace Joomla\Router;
 
+use Jeremeamia\SuperClosure\SerializableClosure;
+
 /**
  * A path router.
  *
  * @since  1.0
  */
-class Router
+class Router implements \Serializable
 {
 	/**
 	 * An array of rules, each rule being an associative for routing the request.
@@ -65,7 +67,7 @@ class Router
 	 *
 	 * @since   1.0
 	 */
-	public function addRoute($method = 'GET', $pattern, $controller, array $rules = array())
+	public function addRoute($method, $pattern, $controller, array $rules = array())
 	{
 		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
 
@@ -101,39 +103,13 @@ class Router
 		// Loop on each segment
 		foreach ($pattern as $segment)
 		{
-			if ($segment == '*')
-			{
-				// Match a splat with no variable.
-				$regex[] = '.*';
-			}
-			elseif ($segment[0] == '*')
-			{
-				// Match a splat and capture the data to a named variable.
-				$vars[] = substr($segment, 1);
-				$regex[] = '(.*)';
-			}
-			elseif ($segment[0] == '\\' && $segment[1] == '*')
-			{
-				// Match an escaped splat segment.
-				$regex[] = '\*' . preg_quote(substr($segment, 2));
-			}
-			elseif ($segment == ':')
-			{
-				// Match an unnamed variable without capture.
-				$regex[] = '[^/]*';
-			}
-			elseif ($segment[0] == ':')
+			if ($segment[0] == ':')
 			{
 				// Match a named variable and capture the data.
 				$varName = substr($segment, 1);
 				$vars[] = $varName;
 				// Use the regex in the rules array if it has been defined.
-				$regex[] = array_key_exists($varName, $rules) ? $rules[$varName] : '([^/]*)';
-			}
-			elseif ($segment[0] == '\\' && $segment[1] == ':')
-			{
-				// Match a segment with an escaped variable character prefix.
-				$regex[] = preg_quote(substr($segment, 1));
+				$regex[] = array_key_exists($varName, $rules) ? '(' . $rules[$varName] . ')' : '([^/]*)';
 			}
 			else
 			{
@@ -198,14 +174,18 @@ class Router
 	 */
 	public function parseRoute($route, $method = 'GET')
 	{
-		// Trim the query string off.
-		$route = preg_replace('/([^?]*).*/u', '\1', $route);
+		$method = strtoupper($method);
 
-		// Sanitize and explode the route.
+		if (! array_key_exists($method, $this->routes))
+		{
+			throw new \InvalidArgumentException(sprintf('%s is not a valid HTTP method.', $method));
+		}
+
+		// Get the path from the route and remove and leading or trailing slash.
 		$route = trim(parse_url($route, PHP_URL_PATH), ' /');
 
 		// Iterate through all of the known routes looking for a match.
-		foreach ($this->routes[strtoupper($method)] as $rule)
+		foreach ($this->routes[$method] as $rule)
 		{
 			if (preg_match($rule['regex'], $route, $matches))
 			{
@@ -380,5 +360,44 @@ class Router
 		}
 
 		return $this;
+	}
+
+	/**
+	 * String representation of the Router object
+	 *
+	 * @link    http://php.net/manual/en/serializable.serialize.php
+	 *
+	 * @return  string  the string representation of the object or null
+	 */
+	public function serialize()
+	{
+		$routesCopy = $this->routes;
+
+		foreach ($routesCopy as $httpRequestMethod => $routes)
+		{
+			foreach ($routes as $i => $route)
+			{
+				if ($route['controller'] instanceof \Closure)
+				{
+					$routesCopy[$httpRequestMethod][$i]['controller'] = new SerializableClosure($route['controller']);
+				}
+			}
+		}
+
+		return serialize($routesCopy);
+	}
+
+	/**
+	 * Constructs the object from a serialized string
+	 *
+	 * @link    http://php.net/manual/en/serializable.unserialize.php
+	 *
+	 * @param   string  $serialized  The string representation of the object.
+	 *
+	 * @return  void
+	 */
+	public function unserialize($serialized)
+	{
+		$this->routes = unserialize($serialized);
 	}
 }

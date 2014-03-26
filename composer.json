@@ -11,7 +11,11 @@
     	"joomla/input": "~1.0"
     },
     "require-dev": {
-    	"joomla/test": "~1.0"
+    	"joomla/test": "~1.0",
+        "jeremeamia/superclosure": "~1.0"
+    },
+    "suggest": {
+        "jeremeamia/superclosure": "If you use Closure controllers, and want to be able to cache / serialize the router, please install jeremeamia/superclosure:~1.0"
     },
     "autoload": {
     	"psr-4": {
