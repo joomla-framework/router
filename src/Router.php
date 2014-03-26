@@ -220,7 +220,7 @@ class Router implements \Serializable
 	 */
 	public function get($pattern, $controller, array $rules = array())
 	{
-		$this->addRoute('GET', $pattern, $controller, $rules);
+		return $this->addRoute('GET', $pattern, $controller, $rules);
 	}
 
 	/**
@@ -236,7 +236,7 @@ class Router implements \Serializable
 	 */
 	public function post($pattern, $controller, array $rules = array())
 	{
-		$this->addRoute('POST', $pattern, $controller, $rules);
+		return $this->addRoute('POST', $pattern, $controller, $rules);
 	}
 
 	/**
@@ -252,7 +252,7 @@ class Router implements \Serializable
 	 */
 	public function put($pattern, $controller, array $rules = array())
 	{
-		$this->addRoute('PUT', $pattern, $controller, $rules);
+		return $this->addRoute('PUT', $pattern, $controller, $rules);
 	}
 
 	/**
@@ -268,7 +268,7 @@ class Router implements \Serializable
 	 */
 	public function delete($pattern, $controller, array $rules = array())
 	{
-		$this->addRoute('DELETE', $pattern, $controller, $rules);
+		return $this->addRoute('DELETE', $pattern, $controller, $rules);
 	}
 
 	/**
@@ -284,7 +284,7 @@ class Router implements \Serializable
 	 */
 	public function head($pattern, $controller, array $rules = array())
 	{
-		$this->addRoute('HEAD', $pattern, $controller, $rules);
+		return $this->addRoute('HEAD', $pattern, $controller, $rules);
 	}
 
 	/**
@@ -300,7 +300,7 @@ class Router implements \Serializable
 	 */
 	public function options($pattern, $controller, array $rules = array())
 	{
-		$this->addRoute('OPTIONS', $pattern, $controller, $rules);
+		return $this->addRoute('OPTIONS', $pattern, $controller, $rules);
 	}
 
 	/**
