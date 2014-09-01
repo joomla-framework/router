@@ -1,8 +1,9 @@
-# The Router Package
+# The Router Package [![Build Status](https://travis-ci.org/joomla-framework/router.png?branch=master)](https://travis-ci.org/joomla-framework/router)
 
 ### Construction
 
-```
+
+```php
 use Joomla\Router\Router;
 
 // Create a default web request router.
@@ -15,7 +16,7 @@ The purpose of a router is to find a controller based on a routing path. The pat
 
 The `addMap` method is used to map at routing pattern to a controller.
 
-```
+```php
 $router = new Router;
 $router
     ->addMap('/article/:article_id', 'Acme\\ArticleController`) // Route to Controller
@@ -58,7 +59,7 @@ At this point, you can do whatever you want with the returned data. It's up to y
 
 ## Installation via Composer
 
-Add `"joomla/router": "~1.0"` to the require block in your composer.json, make sure you have `"minimum-stability": "dev"` and then run `composer install`.
+Add `"joomla/router": "~1.0"` to the require block in your composer.json and then run `composer install`.
 
 ```json
 {

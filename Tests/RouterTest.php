@@ -114,10 +114,17 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Tests the Joomla\Router\Router::addMap method.
 	 *
+	 * @param   string  $route       The route pattern to use for matching.
+	 * @param   string  $controller  The controller name to map to the given pattern.
+	 * @param   string  $regex       The generated regex to match.
+	 * @param   array   $vars        Variables captured from route
+	 * @param   string  $called      Controller called.
+	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Router\Router::addMap
-	 * @since   1.0
+	 * @covers        Joomla\Router\Router::addMap
+	 * @dataProvider  dataAddMap
+	 * @since         1.0
 	 */
 	public function testAddRoute()
 	{
