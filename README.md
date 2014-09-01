@@ -59,12 +59,12 @@ At this point, you can do whatever you want with the returned data. It's up to y
 
 ## Installation via Composer
 
-Add `"joomla/router": "~1.0"` to the require block in your composer.json and then run `composer install`.
+Add `"joomla/router": "2.0.*@dev"` to the require block in your composer.json and then run `composer install`.
 
 ```json
 {
 	"require": {
-		"joomla/router": "~1.0"
+		"joomla/router": "2.0.*@dev"
 	}
 }
 ```
@@ -72,5 +72,5 @@ Add `"joomla/router": "~1.0"` to the require block in your composer.json and the
 Alternatively, you can simply run the following from the command line:
 
 ```sh
-composer require joomla/router "~1.0"
+composer require joomla/router "2.0.*@dev"
 ```
