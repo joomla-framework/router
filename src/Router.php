@@ -29,7 +29,7 @@ class Router implements \Serializable
 	 * @var    array
 	 * @since  __DEPLOY_VERSION__
 	 */
-	public $routes = array(
+	protected $routes = array(
 		'GET' => array(),
 		'PUT' => array(),
 		'POST' => array(),
