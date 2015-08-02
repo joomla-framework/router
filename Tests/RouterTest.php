@@ -88,11 +88,18 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 					'controller' => 'login'
 				),
 				array(
-					'regex' => chr(1) . '^requests/(\d+)$' . chr(1),
+					'regex' => chr(1) . '^requests/((\d+))$' . chr(1),
 					'vars' => array('request_id'),
 					'controller' => 'request'
 				)
-			)
+			),
+			'PUT' => array(),
+			'POST' => array(),
+			'DELETE' => array(),
+			'HEAD' => array(),
+			'OPTIONS' => array(),
+			'TRACE' => array(),
+			'PATCH' => array()
 		);
 
 		$router = new Router($routes);
@@ -123,7 +130,14 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 						'vars' => array(),
 						'controller' => 'MyApplicationFoo'
 					)
-				)
+				),
+				'PUT' => array(),
+				'POST' => array(),
+				'DELETE' => array(),
+				'HEAD' => array(),
+				'OPTIONS' => array(),
+				'TRACE' => array(),
+				'PATCH' => array()
 			),
 			'routes',
 			$this->instance
@@ -167,7 +181,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 					'controller' => 'login'
 				),
 				array(
-					'regex' => chr(1) . '^user/([^/]*)/(\d+)$' . chr(1),
+					'regex' => chr(1) . '^user/([^/]*)/((\d+))$' . chr(1),
 					'vars' => array(
 						'name',
 						'id'
@@ -175,11 +189,18 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 					'controller' => 'UserController'
 				),
 				array(
-					'regex' => chr(1) . '^requests/(\d+)$' . chr(1),
+					'regex' => chr(1) . '^requests/((\d+))$' . chr(1),
 					'vars' => array('request_id'),
 					'controller' => 'request'
 				)
-			)
+			),
+			'PUT' => array(),
+			'POST' => array(),
+			'DELETE' => array(),
+			'HEAD' => array(),
+			'OPTIONS' => array(),
+			'TRACE' => array(),
+			'PATCH' => array()
 		);
 
 		$this->instance->addRoutes($routes);
