@@ -7,29 +7,21 @@
 namespace Joomla\Router\Tests;
 
 use Joomla\Router\Router;
-use Joomla\Test\TestHelper;
 
 /**
  * Tests for the Joomla\Router\Router class.
- *
- * @since  1.0
  */
 class RouterTest extends \PHPUnit_Framework_TestCase
 {
 	/**
 	 * An instance of the object to be tested.
 	 *
-	 * @var    Router
-	 * @since  1.0
+	 * @var  Router
 	 */
 	protected $instance;
 
 	/**
-	 * Prepares the environment before running a test.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
+	 * {@inheritdoc}
 	 */
 	protected function setUp()
 	{
@@ -39,12 +31,9 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Router\Router::__construct method.
+	 * @testdox  Ensure the Router is instantiated correctly with no injected routes.
 	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Router\Router::__construct
-	 * @since   1.0
+	 * @covers   Joomla\Router\Router::__construct
 	 */
 	public function test__construct()
 	{
@@ -59,16 +48,21 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 			'PATCH' => array()
 		);
 
-		$this->assertAttributeEquals($emptyRoutes, 'routes', $this->instance);
+		$router = new Router;
+
+		$this->assertAttributeEquals(
+			$emptyRoutes,
+			'routes',
+			$router,
+			'A Router should have no known routes by default.'
+		);
 	}
 
 	/**
-	 * Tests the Joomla\Router\Router::__construct method.
+	 * @testdox  Ensure the Router is instantiated correctly with injected routes.
 	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Router\Router::__construct
-	 * @since   1.0
+	 * @covers   Joomla\Router\Router::__construct
+	 * @uses     Joomla\Router\Router::addRoutes
 	 */
 	public function test__constructNotEmpty()
 	{
@@ -112,23 +106,15 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Router\Router::addMap method.
+	 * @testdox  Ensure a route is added to the Router.
 	 *
-	 * @param   string  $route       The route pattern to use for matching.
-	 * @param   string  $controller  The controller name to map to the given pattern.
-	 * @param   string  $regex       The generated regex to match.
-	 * @param   array   $vars        Variables captured from route
-	 * @param   string  $called      Controller called.
-	 *
-	 * @return  void
-	 *
-	 * @covers        Joomla\Router\Router::addMap
-	 * @dataProvider  dataAddMap
-	 * @since         1.0
+	 * @covers   Joomla\Router\Router::addRoute
+	 * @uses     Joomla\Router\Router::buildRegexAndVarList
 	 */
 	public function testAddRoute()
 	{
 		$this->instance->addRoute('GET', 'foo', 'MyApplicationFoo');
+
 		$this->assertAttributeEquals(
 			array(
 				'GET' => array(
@@ -145,12 +131,10 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Router\Router::addMaps method.
+	 * @testdox  Ensure several routes are added to the Router.
 	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Router\Router::addMaps
-	 * @since   1.0
+	 * @covers   Joomla\Router\Router::addRoutes
+	 * @uses     Joomla\Router\Router::addRoute
 	 */
 	public function testAddRoutes()
 	{
@@ -200,23 +184,19 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
 		$this->instance->addRoutes($routes);
 		$this->assertAttributeEquals($rules, 'routes', $this->instance);
-
-		$this->instance->get();
 	}
 
 	/**
-	 * Tests the Joomla\Router\Router::parseRoute method.
+	 * @testdox  Ensure the Router parses routes.
 	 *
 	 * @param   string   $r  The route to parse.
 	 * @param   boolean  $e  True if an exception is expected.
 	 * @param   array    $i  The expected return data.
 	 * @param   integer  $m  The map set to use for setting up the router.
 	 *
-	 * @return  void
-	 *
 	 * @covers        Joomla\Router\Router::parseRoute
 	 * @dataProvider  seedTestParseRoute
-	 * @since         1.0
+	 * @uses          Joomla\Router\Router::addRoutes
 	 */
 	public function testParseRoute($r, $e, $i, $m)
 	{
@@ -230,7 +210,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 		}
 
 		// Execute the route parsing.
-		$actual = TestHelper::invoke($this->instance, 'parseRoute', $r);
+		$actual = $this->instance->parseRoute($r);
 
 		// Test the assertions.
 		$this->assertEquals($i, $actual, 'Incorrect value returned.');
@@ -240,8 +220,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	 * Provides test data for the testParseRoute method.
 	 *
 	 * @return  array
-	 *
-	 * @since   1.0
 	 */
 	public static function seedTestParseRoute()
 	{
@@ -259,12 +237,24 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 			array('test/foo/path', true, array(), 2),
 			array('test/foo/path/bar', false, array('controller' => 'TestController', 'vars' => array('seg1' => 'foo', 'seg2' => 'bar')), 2),
 			array('content/article-1/*', false, array('controller' => 'ContentController', 'vars' => array()), 2),
-			array('content/cat-1/article-1', false,
-				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1', 'article' => 'article-1')), 2),
-			array('content/cat-1/cat-2/article-1', false,
-				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1/cat-2', 'article' => 'article-1')), 2),
-			array('content/cat-1/cat-2/cat-3/article-1', false,
-				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1/cat-2/cat-3', 'article' => 'article-1')), 2)
+			array(
+				'content/cat-1/article-1',
+				false,
+				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1', 'article' => 'article-1')),
+				2
+			),
+			array(
+				'content/cat-1/cat-2/article-1',
+				false,
+				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1/cat-2', 'article' => 'article-1')),
+				2
+			),
+			array(
+				'content/cat-1/cat-2/cat-3/article-1',
+				false,
+				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1/cat-2/cat-3', 'article' => 'article-1')),
+				2
+			)
 		);
 	}
 
@@ -274,8 +264,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	 * This has no routes but has a default controller for the home page.
 	 *
 	 * @return  void
-	 *
-	 * @since   1.0
 	 */
 	protected function setRoutes1()
 	{
@@ -286,8 +274,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	 * Setup the router maps to option 2.
 	 *
 	 * @return  void
-	 *
-	 * @since   1.0
 	 */
 	protected function setRoutes2()
 	{
