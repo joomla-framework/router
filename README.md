@@ -19,9 +19,9 @@ The `addMap` method is used to map at routing pattern to a controller.
 ```php
 $router = new Router;
 $router
-    ->addMap('/article/:article_id', 'Acme\\ArticleController`) // Route to Controller
+    ->addMap('/article/:article_id', 'Acme\\ArticleController') // Route to Controller
 	->addMap('/component/*', function() { return true; }) // Route to Closure
-	->addMap('/user/:id, 'get_user'); // Route to function / callable
+	->addMap('/user/:id', 'get_user'); // Route to function / callable
 
 function get_user($id)
 {
