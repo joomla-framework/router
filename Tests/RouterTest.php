@@ -213,7 +213,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	 * @param   string   $r  The route to parse.
 	 * @param   boolean  $e  True if an exception is expected.
 	 * @param   array    $i  The expected return data.
-	 * @param   integer  $m  The map set to use for setting up the router.
+	 * @param   boolean  $m  True if routes should be set up.
 	 *
 	 * @covers        Joomla\Router\Router::parseRoute
 	 * @dataProvider  seedTestParseRoute
@@ -221,8 +221,10 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testParseRoute($r, $e, $i, $m)
 	{
-		// Setup the router maps.
-		$this->{'setRoutes' . $m}();
+		if ($m)
+		{
+			$this->setRoutes();
+		}
 
 		// If we should expect an exception set that up.
 		if ($e)
@@ -246,57 +248,45 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	{
 		// Route Pattern, Throws Exception, Return Data, MapSetup
 		return array(
-			array('', true, array(), 1),
-			array('articles/4', true, array(), 1),
-			array('', true, array(), 2),
-			array('login', false, array('controller' => 'LoginController', 'vars' => array()), 2),
-			array('articles', false, array('controller' => 'ArticlesController', 'vars' => array()), 2),
-			array('articles/4', false, array('controller' => 'ArticleController', 'vars' => array('article_id' => 4)), 2),
-			array('articles/4/crap', true, array(), 2),
-			array('test', true, array(), 2),
-			array('test/foo', true, array(), 2),
-			array('test/foo/path', true, array(), 2),
-			array('test/foo/path/bar', false, array('controller' => 'TestController', 'vars' => array('seg1' => 'foo', 'seg2' => 'bar')), 2),
-			array('content/article-1/*', false, array('controller' => 'ContentController', 'vars' => array()), 2),
+			array('', true, array(), false),
+			array('articles/4', true, array(), false),
+			array('', true, array(), true),
+			array('login', false, array('controller' => 'LoginController', 'vars' => array()), true),
+			array('articles', false, array('controller' => 'ArticlesController', 'vars' => array()), true),
+			array('articles/4', false, array('controller' => 'ArticleController', 'vars' => array('article_id' => 4)), true),
+			array('articles/4/crap', true, array(), true),
+			array('test', true, array(), true),
+			array('test/foo', true, array(), true),
+			array('test/foo/path', true, array(), true),
+			array('test/foo/path/bar', false, array('controller' => 'TestController', 'vars' => array('seg1' => 'foo', 'seg2' => 'bar')), true),
+			array('content/article-1/*', false, array('controller' => 'ContentController', 'vars' => array()), true),
 			array(
 				'content/cat-1/article-1',
 				false,
 				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1', 'article' => 'article-1')),
-				2
+				true
 			),
 			array(
 				'content/cat-1/cat-2/article-1',
 				false,
 				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1/cat-2', 'article' => 'article-1')),
-				2
+				true
 			),
 			array(
 				'content/cat-1/cat-2/cat-3/article-1',
 				false,
 				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1/cat-2/cat-3', 'article' => 'article-1')),
-				2
+				true
 			)
 		);
 	}
 
 	/**
-	 * Setup the router maps to option 1.
-	 *
-	 * This has no routes but has a default controller for the home page.
+	 * Setup the router with routes.
 	 *
 	 * @return  void
 	 */
-	protected function setRoutes1()
-	{
-		$this->instance->addRoutes(array());
-	}
-
-	/**
-	 * Setup the router maps to option 2.
-	 *
-	 * @return  void
-	 */
-	protected function setRoutes2()
+	protected function setRoutes()
 	{
 		$this->instance->addRoutes(
 			array(
