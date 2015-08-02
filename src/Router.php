@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Router Package
  *
- * @copyright  Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -21,13 +21,13 @@ class Router implements \Serializable
 	 * An array of rules, each rule being an associative for routing the request.
 	 *
 	 * Example: array(
-	 *              'regex' => $regex,
-	 *              'vars' => $vars,
-	 *              'controller' => $controller
-	 *          )
+	 *     'regex' => $regex,
+	 *     'vars' => $vars,
+	 *     'controller' => $controller
+	 * )
 	 *
 	 * @var    array
-	 * @since  1.0
+	 * @since  __DEPLOY_VERSION__
 	 */
 	public $routes = array(
 		'GET' => array(),
@@ -63,9 +63,9 @@ class Router implements \Serializable
 	 * @param   mixed   $controller  The controller to map to the given pattern.
 	 * @param   array   $rules       An array of regex rules keyed using the named route variables.
 	 *
-	 * @return  Router  Returns itself to support chaining.
+	 * @return  $this
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function addRoute($method, $pattern, $controller, array $rules = array())
 	{
@@ -81,13 +81,14 @@ class Router implements \Serializable
 	}
 
 	/**
-	 * Parse the given pattern to extract the named variables and build
-	 * a proper regular expression for use when parsing the routes.
+	 * Parse the given pattern to extract the named variables and build a proper regular expression for use when parsing the routes.
 	 *
 	 * @param   string  $pattern  The route pattern to use for matching.
 	 * @param   array   $rules    An array of regex rules keyed using the named route variables.
 	 *
 	 * @return  array
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	protected function buildRegexAndVarList($pattern, array $rules = array())
 	{
@@ -108,6 +109,7 @@ class Router implements \Serializable
 				// Match a named variable and capture the data.
 				$varName = substr($segment, 1);
 				$vars[] = $varName;
+
 				// Use the regex in the rules array if it has been defined.
 				$regex[] = array_key_exists($varName, $rules) ? '(' . $rules[$varName] . ')' : '([^/]*)';
 			}
@@ -129,11 +131,10 @@ class Router implements \Serializable
 	 *
 	 * @param   array  $routes  A list of route maps to add to the router as $pattern => $controller.
 	 *
-	 * @return  Router  Returns itself to support chaining.
+	 * @return  $this
 	 *
+	 * @since   __DEPLOY_VERSION__
 	 * @throws  \UnexpectedValueException  If missing the `pattern` or `controller` keys from the map.
-	 *
-	 * @since   1.0
 	 */
 	public function addRoutes(array $routes)
 	{
@@ -214,9 +215,9 @@ class Router implements \Serializable
 	 * @param   mixed   $controller  The controller to map to the given pattern.
 	 * @param   array   $rules       An array of regex rules keyed using the route variables.
 	 *
-	 * @return  Router  Returns itself to support chaining.
+	 * @return  $this
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function get($pattern, $controller, array $rules = array())
 	{
@@ -230,9 +231,9 @@ class Router implements \Serializable
 	 * @param   mixed   $controller  The controller to map to the given pattern.
 	 * @param   array   $rules       An array of regex rules keyed using the route variables.
 	 *
-	 * @return  Router  Returns itself to support chaining.
+	 * @return  $this
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function post($pattern, $controller, array $rules = array())
 	{
@@ -246,9 +247,9 @@ class Router implements \Serializable
 	 * @param   mixed   $controller  The controller to map to the given pattern.
 	 * @param   array   $rules       An array of regex rules keyed using the route variables.
 	 *
-	 * @return  Router  Returns itself to support chaining.
+	 * @return  $this
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function put($pattern, $controller, array $rules = array())
 	{
@@ -262,9 +263,9 @@ class Router implements \Serializable
 	 * @param   mixed   $controller  The controller to map to the given pattern.
 	 * @param   array   $rules       An array of regex rules keyed using the route variables.
 	 *
-	 * @return  Router  Returns itself to support chaining.
+	 * @return  $this
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function delete($pattern, $controller, array $rules = array())
 	{
@@ -278,9 +279,9 @@ class Router implements \Serializable
 	 * @param   mixed   $controller  The controller to map to the given pattern.
 	 * @param   array   $rules       An array of regex rules keyed using the route variables.
 	 *
-	 * @return  Router  Returns itself to support chaining.
+	 * @return  $this
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function head($pattern, $controller, array $rules = array())
 	{
@@ -294,9 +295,9 @@ class Router implements \Serializable
 	 * @param   mixed   $controller  The controller to map to the given pattern.
 	 * @param   array   $rules       An array of regex rules keyed using the route variables.
 	 *
-	 * @return  Router  Returns itself to support chaining.
+	 * @return  $this
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function options($pattern, $controller, array $rules = array())
 	{
@@ -310,9 +311,9 @@ class Router implements \Serializable
 	 * @param   mixed   $controller  The controller to map to the given pattern.
 	 * @param   array   $rules       An array of regex rules keyed using the route variables.
 	 *
-	 * @return  Router  Returns itself to support chaining.
+	 * @return  $this
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function trace($pattern, $controller, array $rules = array())
 	{
@@ -326,9 +327,9 @@ class Router implements \Serializable
 	 * @param   mixed   $controller  The controller to map to the given pattern.
 	 * @param   array   $rules       An array of regex rules keyed using the route variables.
 	 *
-	 * @return  Router  Returns itself to support chaining.
+	 * @return  $this
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function patch($pattern, $controller, array $rules = array())
 	{
@@ -342,9 +343,9 @@ class Router implements \Serializable
 	 * @param   mixed   $controller  The controller to map to the given pattern.
 	 * @param   array   $rules       An array of regex rules keyed using the route variables.
 	 *
-	 * @return  Router  Returns itself to support chaining.
+	 * @return  $this
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function all($pattern, $controller, array $rules = array())
 	{
@@ -365,9 +366,10 @@ class Router implements \Serializable
 	/**
 	 * String representation of the Router object
 	 *
-	 * @link    http://php.net/manual/en/serializable.serialize.php
+	 * @return  string  The string representation of the object or null
 	 *
-	 * @return  string  the string representation of the object or null
+	 * @link    http://php.net/manual/en/serializable.serialize.php
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function serialize()
 	{
@@ -390,11 +392,12 @@ class Router implements \Serializable
 	/**
 	 * Constructs the object from a serialized string
 	 *
-	 * @link    http://php.net/manual/en/serializable.unserialize.php
-	 *
 	 * @param   string  $serialized  The string representation of the object.
 	 *
 	 * @return  void
+	 *
+	 * @link    http://php.net/manual/en/serializable.unserialize.php
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function unserialize($serialized)
 	{
