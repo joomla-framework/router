@@ -7,16 +7,16 @@ The Router package is used to register an application's routes and to route the 
 The purpose of a router is to find a controller based on a routing path. The path could be a URL for a web site, or it could be an
 end-point for a RESTful web-services API.
 
-The `addMap` method is used to map at routing pattern to a controller.
+The `addRoute` method is used to map at routing pattern to a controller.
 
 ```php
 use Joomla\Router\Router;
 
 $router = new Router;
 $router
-    ->addMap('/article/:article_id', 'Acme\\ArticleController') // Route to Controller
-	->addMap('/component/*', function() { return true; }) // Route to Closure
-	->addMap('/user/:id', 'get_user'); // Route to function / callable
+    ->addRoute('GET', '/article/:article_id', 'Acme\\ArticleController') // Route to Controller
+	->addRoute('GET', '/component/*', function() { return true; }) // Route to Closure
+	->addRoute('GET', '/user/:id', 'get_user'); // Route to function / callable
 
 function get_user($id)
 {
@@ -32,7 +32,8 @@ the named variables as the keys and the desired regex as the values.
 use Joomla\Router\Router;
 
 $router = new Router;
-$router->addMap(
+$router->addRoute(
+    'GET',
     '/user/:id',
     'UserController@show',
     array(
