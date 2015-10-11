@@ -104,7 +104,28 @@ class Router implements \Serializable
 		// Loop on each segment
 		foreach ($pattern as $segment)
 		{
-			if ($segment[0] == ':')
+			if ($segment == '*')
+			{
+				// Match a splat with no variable.
+				$regex[] = '.*';
+			}
+			elseif ($segment[0] == '*')
+			{
+				// Match a splat and capture the data to a named variable.
+				$vars[] = substr($segment, 1);
+				$regex[] = '(.*)';
+			}
+			elseif ($segment[0] == '\\' && $segment[1] == '*')
+			{
+				// Match an escaped splat segment.
+				$regex[] = '\*' . preg_quote(substr($segment, 2));
+			}
+			elseif ($segment == ':')
+			{
+				// Match an unnamed variable without capture.
+				$regex[] = '([^/]*)';
+			}
+			elseif ($segment[0] == ':')
 			{
 				// Match a named variable and capture the data.
 				$varName = substr($segment, 1);
@@ -112,6 +133,11 @@ class Router implements \Serializable
 
 				// Use the regex in the rules array if it has been defined.
 				$regex[] = array_key_exists($varName, $rules) ? '(' . $rules[$varName] . ')' : '([^/]*)';
+			}
+			elseif ($segment[0] == '\\' && $segment[1] == ':')
+			{
+				// Match a segment with an escaped variable character prefix.
+				$regex[] = preg_quote(substr($segment, 1));
 			}
 			else
 			{
