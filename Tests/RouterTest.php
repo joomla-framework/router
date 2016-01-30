@@ -250,7 +250,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 		return array(
 			array('', true, array(), false),
 			array('articles/4', true, array(), false),
-			array('', true, array(), true),
+			array('', false, array('controller' => 'DefaultController', 'vars' => array()), true),
 			array('login', false, array('controller' => 'LoginController', 'vars' => array()), true),
 			array('articles', false, array('controller' => 'ArticlesController', 'vars' => array()), true),
 			array('articles/4', false, array('controller' => 'ArticleController', 'vars' => array('article_id' => 4)), true),
@@ -317,6 +317,10 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 				array(
 				   'pattern' => 'content/*category/:article',
 				   'controller' => 'ArticleController'
+				),
+				array(
+					'pattern' => '/',
+					'controller' => 'DefaultController'
 				)
 			)
 		);
