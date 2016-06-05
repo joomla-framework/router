@@ -29,16 +29,16 @@ class Router implements \Serializable
 	 * @var    array
 	 * @since  __DEPLOY_VERSION__
 	 */
-	protected $routes = array(
-		'GET' => array(),
-		'PUT' => array(),
-		'POST' => array(),
-		'DELETE' => array(),
-		'HEAD' => array(),
-		'OPTIONS' => array(),
-		'TRACE' => array(),
-		'PATCH' => array()
-	);
+	protected $routes = [
+		'GET'     => [],
+		'PUT'     => [],
+		'POST'    => [],
+		'DELETE'  => [],
+		'HEAD'    => [],
+		'OPTIONS' => [],
+		'TRACE'   => [],
+		'PATCH'   => []
+	];
 
 	/**
 	 * Constructor.
@@ -47,7 +47,7 @@ class Router implements \Serializable
 	 *
 	 * @since   1.0
 	 */
-	public function __construct(array $maps = array())
+	public function __construct(array $maps = [])
 	{
 		if (! empty($maps))
 		{
@@ -67,15 +67,15 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function addRoute($method, $pattern, $controller, array $rules = array())
+	public function addRoute($method, $pattern, $controller, array $rules = [])
 	{
 		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
 
-		$this->routes[strtoupper($method)][] = array(
-			'regex' => $regex,
-			'vars' => $vars,
+		$this->routes[strtoupper($method)][] = [
+			'regex'      => $regex,
+			'vars'       => $vars,
 			'controller' => $controller
-		);
+		];
 
 		return $this;
 	}
@@ -90,16 +90,16 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected function buildRegexAndVarList($pattern, array $rules = array())
+	protected function buildRegexAndVarList($pattern, array $rules = [])
 	{
 		// Sanitize and explode the pattern.
 		$pattern = explode('/', trim(parse_url((string) $pattern, PHP_URL_PATH), ' /'));
 
 		// Prepare the route variables
-		$vars = array();
+		$vars = [];
 
 		// Initialize regular expression
-		$regex = array();
+		$regex = [];
 
 		// Loop on each segment
 		foreach ($pattern as $segment)
@@ -146,10 +146,10 @@ class Router implements \Serializable
 			}
 		}
 
-		return array(
+		return [
 			chr(1) . '^' . implode('/', $regex) . '$' . chr(1),
 			$vars
-		);
+		];
 	}
 
 	/**
@@ -179,7 +179,7 @@ class Router implements \Serializable
 			}
 
 			// If rules have been specified, add them as well.
-			$rules = array_key_exists('rules', $route) ? $route['rules'] : array();
+			$rules  = array_key_exists('rules', $route) ? $route['rules'] : [];
 			$method = array_key_exists('method', $route) ? $route['method'] : 'GET';
 
 			$this->addRoute($method, $route['pattern'], $route['controller'], $rules);
@@ -217,17 +217,17 @@ class Router implements \Serializable
 			if (preg_match($rule['regex'], $route, $matches))
 			{
 				// If we have gotten this far then we have a positive match.
-				$vars = array();
+				$vars = [];
 
 				foreach ($rule['vars'] as $i => $var)
 				{
 					$vars[$var] = $matches[$i + 1];
 				}
 
-				return array(
+				return [
 					'controller' => $rule['controller'],
-					'vars' => $vars
-				);
+					'vars'       => $vars
+				];
 			}
 		}
 
@@ -245,7 +245,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function get($pattern, $controller, array $rules = array())
+	public function get($pattern, $controller, array $rules = [])
 	{
 		return $this->addRoute('GET', $pattern, $controller, $rules);
 	}
@@ -261,7 +261,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function post($pattern, $controller, array $rules = array())
+	public function post($pattern, $controller, array $rules = [])
 	{
 		return $this->addRoute('POST', $pattern, $controller, $rules);
 	}
@@ -277,7 +277,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function put($pattern, $controller, array $rules = array())
+	public function put($pattern, $controller, array $rules = [])
 	{
 		return $this->addRoute('PUT', $pattern, $controller, $rules);
 	}
@@ -293,7 +293,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function delete($pattern, $controller, array $rules = array())
+	public function delete($pattern, $controller, array $rules = [])
 	{
 		return $this->addRoute('DELETE', $pattern, $controller, $rules);
 	}
@@ -309,7 +309,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function head($pattern, $controller, array $rules = array())
+	public function head($pattern, $controller, array $rules = [])
 	{
 		return $this->addRoute('HEAD', $pattern, $controller, $rules);
 	}
@@ -325,7 +325,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function options($pattern, $controller, array $rules = array())
+	public function options($pattern, $controller, array $rules = [])
 	{
 		return $this->addRoute('OPTIONS', $pattern, $controller, $rules);
 	}
@@ -341,7 +341,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function trace($pattern, $controller, array $rules = array())
+	public function trace($pattern, $controller, array $rules = [])
 	{
 		return $this->addRoute('TRACE', $pattern, $controller, $rules);
 	}
@@ -357,7 +357,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function patch($pattern, $controller, array $rules = array())
+	public function patch($pattern, $controller, array $rules = [])
 	{
 		return $this->addRoute('PATCH', $pattern, $controller, $rules);
 	}
@@ -373,17 +373,17 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function all($pattern, $controller, array $rules = array())
+	public function all($pattern, $controller, array $rules = [])
 	{
 		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
 
 		foreach ($this->routes as $method => $routes)
 		{
-			$this->routes[$method][] = array(
-				'regex' => $regex,
-				'vars' => $vars,
+			$this->routes[$method][] = [
+				'regex'      => $regex,
+				'vars'       => $vars,
 				'controller' => $controller
-			);
+			];
 		}
 
 		return $this;
