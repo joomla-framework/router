@@ -7,11 +7,12 @@
 namespace Joomla\Router\Tests;
 
 use Joomla\Router\Router;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Joomla\Router\Router class.
  */
-class RouterTest extends \PHPUnit_Framework_TestCase
+class RouterTest extends TestCase
 {
 	/**
 	 * An instance of the object to be tested.
@@ -229,7 +230,15 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 		// If we should expect an exception set that up.
 		if ($e)
 		{
-			$this->setExpectedException('InvalidArgumentException');
+			// expectException was added in PHPUnit 5.2 and setExpectedException removed in 6.0
+			if (method_exists($this, 'expectException'))
+			{
+				$this->expectException('InvalidArgumentException');
+			}
+			else
+			{
+				$this->setExpectedException('InvalidArgumentException');
+			}
 		}
 
 		// Execute the route parsing.
