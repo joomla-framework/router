@@ -86,12 +86,14 @@ class RouterTest extends TestCase
 				array(
 					'regex' => chr(1) . '^login$' . chr(1),
 					'vars' => array(),
-					'controller' => 'login'
+					'controller' => 'login',
+					'defaults' => array()
 				),
 				array(
 					'regex' => chr(1) . '^requests/((\d+))$' . chr(1),
 					'vars' => array('request_id'),
-					'controller' => 'request'
+					'controller' => 'request',
+					'defaults' => array()
 				)
 			),
 			'PUT' => array(),
@@ -129,7 +131,40 @@ class RouterTest extends TestCase
 					array(
 						'regex' => chr(1) . '^foo$' . chr(1),
 						'vars' => array(),
-						'controller' => 'MyApplicationFoo'
+						'controller' => 'MyApplicationFoo',
+						'defaults' => array()
+					)
+				),
+				'PUT' => array(),
+				'POST' => array(),
+				'DELETE' => array(),
+				'HEAD' => array(),
+				'OPTIONS' => array(),
+				'TRACE' => array(),
+				'PATCH' => array()
+			),
+			'routes',
+			$this->instance
+		);
+	}
+
+	/**
+	 * @testdox  Ensure a route is added to the Router.
+	 *
+	 * @covers   Joomla\Router\Router::addRoute
+	 */
+	public function testAddRouteWithDefaults()
+	{
+		$this->instance->addRoute('GET', 'foo', 'MyApplicationFoo', [], ['default1' => 'foo']);
+
+		$this->assertAttributeEquals(
+			array(
+				'GET' => array(
+					array(
+						'regex' => chr(1) . '^foo$' . chr(1),
+						'vars' => array(),
+						'controller' => 'MyApplicationFoo',
+						'defaults' => ['default1' => 'foo']
 					)
 				),
 				'PUT' => array(),
@@ -179,7 +214,8 @@ class RouterTest extends TestCase
 				array(
 					'regex' => chr(1) . '^login$' . chr(1),
 					'vars' => array(),
-					'controller' => 'login'
+					'controller' => 'login',
+					'defaults' => array()
 				),
 				array(
 					'regex' => chr(1) . '^user/([^/]*)/((\d+))$' . chr(1),
@@ -187,12 +223,14 @@ class RouterTest extends TestCase
 						'name',
 						'id'
 					),
-					'controller' => 'UserController'
+					'controller' => 'UserController',
+					'defaults' => array()
 				),
 				array(
 					'regex' => chr(1) . '^requests/((\d+))$' . chr(1),
 					'vars' => array('request_id'),
-					'controller' => 'request'
+					'controller' => 'request',
+					'defaults' => array()
 				)
 			),
 			'PUT' => array(),
@@ -286,7 +324,19 @@ class RouterTest extends TestCase
 				false,
 				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1/cat-2/cat-3', 'article' => 'article-1')),
 				true
-			)
+			),
+			array(
+				'default_option/4',
+				false,
+				array('controller' => 'ArticleController', 'vars' => array('article_id' => 4, 'option' => 'content')),
+				true
+			),
+			array(
+				'overriden_option/article/4',
+				false,
+				array('controller' => 'ArticleController', 'vars' => array('id' => 4, 'option' => 'content', 'view' => 'article')),
+				true
+			),
 		);
 	}
 
@@ -330,7 +380,22 @@ class RouterTest extends TestCase
 				array(
 					'pattern' => '/',
 					'controller' => 'DefaultController'
-				)
+				),
+				array(
+					'pattern' => 'default_option/:article_id',
+					'controller' => 'ArticleController',
+					'defaults' => [
+						'option' => 'content'
+					]
+				),
+				array(
+					'pattern' => 'overriden_option/:view/:id',
+					'controller' => 'ArticleController',
+					'defaults' => [
+						'option' => 'content',
+						'view' => 'category'
+					]
+				),
 			)
 		);
 	}
