@@ -69,7 +69,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function addRoute($method, $pattern, $controller, array $rules = [], array $defaults = [])
+	public function addRoute(string $method, string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
 		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
 
@@ -93,7 +93,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected function buildRegexAndVarList($pattern, array $rules = [])
+	protected function buildRegexAndVarList(string $pattern, array $rules = []): array
 	{
 		// Sanitize and explode the pattern.
 		$pattern = explode('/', trim(parse_url((string) $pattern, PHP_URL_PATH), ' /'));
@@ -182,9 +182,9 @@ class Router implements \Serializable
 			}
 
 			// If defaults, rules have been specified, add them as well.
-			$defaults = array_key_exists('defaults', $route) ? $route['defaults'] : [];
-			$rules    = array_key_exists('rules', $route) ? $route['rules'] : [];
-			$method   = array_key_exists('method', $route) ? $route['method'] : 'GET';
+			$defaults = $route['defaults'] ?? [];
+			$rules    = $route['rules'] ?? [];
+			$method   = $route['method'] ?? 'GET';
 
 			$this->addRoute($method, $route['pattern'], $route['controller'], $rules, $defaults);
 		}
@@ -250,7 +250,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function get($pattern, $controller, array $rules = [], array $defaults = [])
+	public function get(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
 		return $this->addRoute('GET', $pattern, $controller, $rules, $defaults);
 	}
@@ -267,7 +267,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function post($pattern, $controller, array $rules = [], array $defaults = [])
+	public function post(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
 		return $this->addRoute('POST', $pattern, $controller, $rules, $defaults);
 	}
@@ -284,7 +284,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function put($pattern, $controller, array $rules = [], array $defaults = [])
+	public function put(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
 		return $this->addRoute('PUT', $pattern, $controller, $rules, $defaults);
 	}
@@ -301,7 +301,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function delete($pattern, $controller, array $rules = [], array $defaults = [])
+	public function delete(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
 		return $this->addRoute('DELETE', $pattern, $controller, $rules, $defaults);
 	}
@@ -318,7 +318,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function head($pattern, $controller, array $rules = [], array $defaults = [])
+	public function head(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
 		return $this->addRoute('HEAD', $pattern, $controller, $rules, $defaults);
 	}
@@ -335,7 +335,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function options($pattern, $controller, array $rules = [], array $defaults = [])
+	public function options(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
 		return $this->addRoute('OPTIONS', $pattern, $controller, $rules, $defaults);
 	}
@@ -352,7 +352,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function trace($pattern, $controller, array $rules = [], array $defaults = [])
+	public function trace(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
 		return $this->addRoute('TRACE', $pattern, $controller, $rules, $defaults);
 	}
@@ -369,7 +369,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function patch($pattern, $controller, array $rules = [], array $defaults = [])
+	public function patch(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
 		return $this->addRoute('PATCH', $pattern, $controller, $rules, $defaults);
 	}
@@ -385,7 +385,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function all($pattern, $controller, array $rules = [])
+	public function all(string $pattern, $controller, array $rules = [])
 	{
 		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
 
