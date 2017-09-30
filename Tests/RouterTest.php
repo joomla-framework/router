@@ -280,6 +280,23 @@ class RouterTest extends TestCase
 	}
 
 	/**
+	 * @testdox  Ensure the Router handles a method not allowed error correctly.
+	 *
+	 * @covers   Joomla\Router\Router::parseRoute
+	 * @uses     Joomla\Router\Router::get
+	 *
+	 * @expectedException  Joomla\Router\Exception\MethodNotAllowedException
+	 * @expectedExceptionMessage  Route `test/foo/path/bar` does not support `POST` requests.
+	 */
+	public function testParseRouteWithMethodNotAllowedError()
+	{
+		$this->instance->get('test/foo/path/bar', 'TestController');
+
+		// Execute the route parsing.
+		$this->instance->parseRoute('test/foo/path/bar', 'POST');
+	}
+
+	/**
 	 * Provides test data for the testParseRoute method.
 	 *
 	 * @return  array

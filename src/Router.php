@@ -202,6 +202,7 @@ class Router implements \Serializable
 	 *
 	 * @since   1.0
 	 * @throws  \InvalidArgumentException
+	 * @throws  Exception\MethodNotAllowedException
 	 */
 	public function parseRoute($route, $method = 'GET')
 	{
@@ -233,6 +234,34 @@ class Router implements \Serializable
 					'vars'       => $vars
 				];
 			}
+		}
+
+		// See if this route is available with another method
+		$allowedMethods = [];
+
+		foreach ($this->routes as $knownMethod => $rules)
+		{
+			if ($method === $knownMethod)
+			{
+				continue;
+			}
+
+			foreach ($rules as $rule)
+			{
+				if (preg_match($rule['regex'], $route, $matches))
+				{
+					$allowedMethods[] = $knownMethod;
+				}
+			}
+		}
+
+		if (!empty($allowedMethods))
+		{
+			throw new Exception\MethodNotAllowedException(
+				array_unique($allowedMethods),
+				sprintf('Route `%s` does not support `%s` requests.', $route, strtoupper($method)),
+				405
+			);
 		}
 
 		throw new Exception\RouteNotFoundException(sprintf('Unable to handle request for route `%s`.', $route), 404);
