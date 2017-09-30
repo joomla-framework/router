@@ -235,7 +235,7 @@ class Router implements \Serializable
 			}
 		}
 
-		throw new \InvalidArgumentException(sprintf('Unable to handle request for route `%s`.', $route), 404);
+		throw new Exception\RouteNotFoundException(sprintf('Unable to handle request for route `%s`.', $route), 404);
 	}
 
 	/**
