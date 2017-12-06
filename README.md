@@ -9,7 +9,7 @@ The Router package is used to register an application's routes and to route the 
 
 ## Requirements
 
-* PHP 5.3.10 or later
+* PHP 7.0 or later
 
 ## Installation
 
