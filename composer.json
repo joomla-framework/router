@@ -4,7 +4,7 @@
     "description": "Joomla Router Package",
     "keywords": ["joomla", "framework", "router"],
     "homepage": "https://github.com/joomla-framework/router",
-    "license": "GPL-2.0+",
+    "license": "GPL-2.0-or-later",
     "require": {
         "php": "~7.0"
     },
