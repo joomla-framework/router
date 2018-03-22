@@ -7,6 +7,7 @@
 namespace Joomla\Router\Tests;
 
 use Joomla\Router\Exception\RouteNotFoundException;
+use Joomla\Router\Route;
 use Joomla\Router\Router;
 use PHPUnit\Framework\TestCase;
 
@@ -84,18 +85,8 @@ class RouterTest extends TestCase
 
 		$rules = array(
 			'GET' => array(
-				array(
-					'regex' => chr(1) . '^login$' . chr(1),
-					'vars' => array(),
-					'controller' => 'login',
-					'defaults' => array()
-				),
-				array(
-					'regex' => chr(1) . '^requests/((\d+))$' . chr(1),
-					'vars' => array('request_id'),
-					'controller' => 'request',
-					'defaults' => array()
-				)
+				new Route('GET', chr(1) . '^login$' . chr(1), 'login', [], []),
+				new Route('GET', chr(1) . '^requests/((\d+))$' . chr(1), 'request', ['request_id'], []),
 			),
 			'PUT' => array(),
 			'POST' => array(),
@@ -124,17 +115,14 @@ class RouterTest extends TestCase
 	 */
 	public function testAddRoute()
 	{
-		$this->instance->addRoute('GET', 'foo', 'MyApplicationFoo');
+		$route = new Route('GET', chr(1) . '^foo$' . chr(1), 'MyApplicationFoo', [], []);
+
+		$this->instance->addRoute($route);
 
 		$this->assertAttributeEquals(
 			array(
 				'GET' => array(
-					array(
-						'regex' => chr(1) . '^foo$' . chr(1),
-						'vars' => array(),
-						'controller' => 'MyApplicationFoo',
-						'defaults' => array()
-					)
+					$route
 				),
 				'PUT' => array(),
 				'POST' => array(),
@@ -156,17 +144,14 @@ class RouterTest extends TestCase
 	 */
 	public function testAddRouteWithDefaults()
 	{
-		$this->instance->addRoute('GET', 'foo', 'MyApplicationFoo', [], ['default1' => 'foo']);
+		$route = new Route('GET', chr(1) . '^foo$' . chr(1), 'MyApplicationFoo', [], ['default1' => 'foo']);
+
+		$this->instance->addRoute($route);
 
 		$this->assertAttributeEquals(
 			array(
 				'GET' => array(
-					array(
-						'regex' => chr(1) . '^foo$' . chr(1),
-						'vars' => array(),
-						'controller' => 'MyApplicationFoo',
-						'defaults' => ['default1' => 'foo']
-					)
+					$route
 				),
 				'PUT' => array(),
 				'POST' => array(),
@@ -212,27 +197,9 @@ class RouterTest extends TestCase
 
 		$rules = array(
 			'GET' => array(
-				array(
-					'regex' => chr(1) . '^login$' . chr(1),
-					'vars' => array(),
-					'controller' => 'login',
-					'defaults' => array()
-				),
-				array(
-					'regex' => chr(1) . '^user/([^/]*)/((\d+))$' . chr(1),
-					'vars' => array(
-						'name',
-						'id'
-					),
-					'controller' => 'UserController',
-					'defaults' => array()
-				),
-				array(
-					'regex' => chr(1) . '^requests/((\d+))$' . chr(1),
-					'vars' => array('request_id'),
-					'controller' => 'request',
-					'defaults' => array()
-				)
+				new Route('GET', chr(1) . '^login$' . chr(1), 'login', [], []),
+				new Route('GET', chr(1) . '^user/([^/]*)/((\d+))$' . chr(1), 'UserController', ['name', 'id'], []),
+				new Route('GET', chr(1) . '^requests/((\d+))$' . chr(1), 'request', ['request_id'], []),
 			),
 			'PUT' => array(),
 			'POST' => array(),
