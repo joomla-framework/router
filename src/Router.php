@@ -198,7 +198,7 @@ class Router implements \Serializable
 	 * @param   string  $route   The route string for which to find and execute a controller.
 	 * @param   string  $method  Request method to match. One of GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE or PATCH
 	 *
-	 * @return  array   An array containing the controller and the matched variables.
+	 * @return  ResolvedRoute
 	 *
 	 * @since   1.0
 	 * @throws  \InvalidArgumentException
@@ -229,10 +229,7 @@ class Router implements \Serializable
 					$vars[$var] = $matches[$i + 1];
 				}
 
-				return [
-					'controller' => $rule['controller'],
-					'vars'       => $vars
-				];
+				return new ResolvedRoute($rule['controller'], $vars);
 			}
 		}
 

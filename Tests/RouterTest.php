@@ -276,7 +276,8 @@ class RouterTest extends TestCase
 		$actual = $this->instance->parseRoute($r);
 
 		// Test the assertions.
-		$this->assertEquals($i, $actual, 'Incorrect value returned.');
+		$this->assertSame($i['controller'], $actual->getController());
+		$this->assertEquals($i['vars'], $actual->getRouteVariables());
 	}
 
 	/**
@@ -310,7 +311,7 @@ class RouterTest extends TestCase
 			array('', false, array('controller' => 'DefaultController', 'vars' => array()), true),
 			array('login', false, array('controller' => 'LoginController', 'vars' => array()), true),
 			array('articles', false, array('controller' => 'ArticlesController', 'vars' => array()), true),
-			array('articles/4', false, array('controller' => 'ArticleController', 'vars' => array('article_id' => 4)), true),
+			array('articles/4', false, array('controller' => 'ArticleController', 'vars' => array('article_id' => '4')), true),
 			array('articles/4/crap', true, array(), true),
 			array('test', true, array(), true),
 			array('test/foo', true, array(), true),
@@ -338,13 +339,13 @@ class RouterTest extends TestCase
 			array(
 				'default_option/4',
 				false,
-				array('controller' => 'ArticleController', 'vars' => array('article_id' => 4, 'option' => 'content')),
+				array('controller' => 'ArticleController', 'vars' => array('article_id' => '4', 'option' => 'content')),
 				true
 			),
 			array(
 				'overriden_option/article/4',
 				false,
-				array('controller' => 'ArticleController', 'vars' => array('id' => 4, 'option' => 'content', 'view' => 'article')),
+				array('controller' => 'ArticleController', 'vars' => array('id' => '4', 'option' => 'content', 'view' => 'article')),
 				true
 			),
 		);
