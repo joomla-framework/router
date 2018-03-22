@@ -226,7 +226,7 @@ class Router implements \Serializable
 					$vars[$var] = $matches[$i + 1];
 				}
 
-				return new ResolvedRoute($rule->getController(), $vars);
+				return new ResolvedRoute($rule->getController(), $vars, $route);
 			}
 		}
 
