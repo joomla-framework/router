@@ -96,9 +96,6 @@ class Route implements \Serializable
 	/**
 	 * Parse the route's pattern to extract the named variables and build a proper regular expression for use when parsing the routes.
 	 *
-	 * @param   string  $pattern  The route pattern to use for matching.
-	 * @param   array   $rules    An array of regex rules keyed using the named route variables.
-	 *
 	 * @return  void
 	 *
 	 * @since   __DEPLOY_VERSION__
