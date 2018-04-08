@@ -34,12 +34,12 @@ class Route implements \Serializable
 	private $defaults = [];
 
 	/**
-	 * The HTTP method this route supports
+	 * The HTTP methods this route supports
 	 *
-	 * @var    string
+	 * @var    string[]
 	 * @since  __DEPLOY_VERSION__
 	 */
-	private $method;
+	private $methods;
 
 	/**
 	 * The route pattern to use for matching
@@ -76,7 +76,7 @@ class Route implements \Serializable
 	/**
 	 * Constructor.
 	 *
-	 * @param   string  $method      The HTTP method this route supports
+	 * @param   array   $methods     The HTTP methods this route supports
 	 * @param   string  $pattern     The route pattern to use for matching
 	 * @param   mixed   $controller  The controller which handles this route
 	 * @param   array   $rules       An array of regex rules keyed using the route variables
@@ -84,9 +84,9 @@ class Route implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function __construct(string $method, string $pattern, $controller, array $rules = [], array $defaults = [])
+	public function __construct(array $methods, string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		$this->setMethod($method);
+		$this->setMethods($methods);
 		$this->setPattern($pattern);
 		$this->setController($controller);
 		$this->setRules($rules);
@@ -188,15 +188,15 @@ class Route implements \Serializable
 	}
 
 	/**
-	 * Retrieve the HTTP method this route supports
+	 * Retrieve the HTTP methods this route supports
 	 *
-	 * @return  string
+	 * @return  string[]
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function getMethod(): string
+	public function getMethods(): array
 	{
-		return $this->method;
+		return $this->methods;
 	}
 
 	/**
@@ -290,17 +290,17 @@ class Route implements \Serializable
 	}
 
 	/**
-	 * Set the HTTP method this route supports
+	 * Set the HTTP methods this route supports
 	 *
-	 * @param   string  $method  The HTTP method this route supports
+	 * @param   array  $methods  The HTTP methods this route supports
 	 *
 	 * @return  $this
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function setMethod(string $method): self
+	public function setMethods(array $methods): self
 	{
-		$this->method = strtoupper($method);
+		$this->methods = $this->methods = array_map('strtoupper', $methods);
 
 		return $this;
 	}
@@ -388,7 +388,7 @@ class Route implements \Serializable
 			[
 				'controller'     => $controller,
 				'defaults'       => $this->getDefaults(),
-				'method'         => $this->getMethod(),
+				'methods'        => $this->getMethods(),
 				'pattern'        => $this->getPattern(),
 				'regex'          => $this->getRegex(),
 				'routeVariables' => $this->getRouteVariables(),
@@ -412,7 +412,7 @@ class Route implements \Serializable
 		list (
 			$this->controller,
 			$this->defaults,
-			$this->method,
+			$this->methods,
 			$this->pattern,
 			$this->regex,
 			$this->routeVariables,

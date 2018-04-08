@@ -40,23 +40,9 @@ class RouterTest extends TestCase
 	 */
 	public function test__construct()
 	{
-		$emptyRoutes = array(
-			'GET' => array(),
-			'PUT' => array(),
-			'POST' => array(),
-			'DELETE' => array(),
-			'HEAD' => array(),
-			'OPTIONS' => array(),
-			'TRACE' => array(),
-			'PATCH' => array()
-		);
-
-		$router = new Router;
-
-		$this->assertAttributeEquals(
-			$emptyRoutes,
+		$this->assertAttributeEmpty(
 			'routes',
-			$router,
+			new Router,
 			'A Router should have no known routes by default.'
 		);
 	}
@@ -84,17 +70,8 @@ class RouterTest extends TestCase
 		);
 
 		$rules = array(
-			'GET' => array(
-				new Route('GET', 'login', 'login', [], []),
-				new Route('GET', 'requests/:request_id', 'request', ['request_id' => '(\d+)'], []),
-			),
-			'PUT' => array(),
-			'POST' => array(),
-			'DELETE' => array(),
-			'HEAD' => array(),
-			'OPTIONS' => array(),
-			'TRACE' => array(),
-			'PATCH' => array()
+			new Route(['GET'], 'login', 'login', [], []),
+			new Route(['GET'], 'requests/:request_id', 'request', ['request_id' => '(\d+)'], []),
 		);
 
 		$router = new Router($routes);
@@ -115,22 +92,13 @@ class RouterTest extends TestCase
 	 */
 	public function testAddRoute()
 	{
-		$route = new Route('GET', 'foo', 'MyApplicationFoo', [], []);
+		$route = new Route(['GET'], 'foo', 'MyApplicationFoo', [], []);
 
 		$this->instance->addRoute($route);
 
 		$this->assertAttributeEquals(
 			array(
-				'GET' => array(
-					$route
-				),
-				'PUT' => array(),
-				'POST' => array(),
-				'DELETE' => array(),
-				'HEAD' => array(),
-				'OPTIONS' => array(),
-				'TRACE' => array(),
-				'PATCH' => array()
+				$route,
 			),
 			'routes',
 			$this->instance
@@ -144,22 +112,13 @@ class RouterTest extends TestCase
 	 */
 	public function testAddRouteWithDefaults()
 	{
-		$route = new Route('GET', 'foo', 'MyApplicationFoo', [], ['default1' => 'foo']);
+		$route = new Route(['GET'], 'foo', 'MyApplicationFoo', [], ['default1' => 'foo']);
 
 		$this->instance->addRoute($route);
 
 		$this->assertAttributeEquals(
 			array(
-				'GET' => array(
-					$route
-				),
-				'PUT' => array(),
-				'POST' => array(),
-				'DELETE' => array(),
-				'HEAD' => array(),
-				'OPTIONS' => array(),
-				'TRACE' => array(),
-				'PATCH' => array()
+				$route,
 			),
 			'routes',
 			$this->instance
@@ -196,18 +155,9 @@ class RouterTest extends TestCase
 		);
 
 		$rules = array(
-			'GET' => array(
-				new Route('GET', 'login', 'login', [], []),
-				new Route('GET', 'user/:name/:id', 'UserController', ['id' => '(\d+)'], []),
-				new Route('GET', 'requests/:request_id', 'request', ['request_id' => '(\d+)'], []),
-			),
-			'PUT' => array(),
-			'POST' => array(),
-			'DELETE' => array(),
-			'HEAD' => array(),
-			'OPTIONS' => array(),
-			'TRACE' => array(),
-			'PATCH' => array()
+			new Route(['GET'], 'login', 'login', [], []),
+			new Route(['GET'], 'user/:name/:id', 'UserController', ['id' => '(\d+)'], []),
+			new Route(['GET'], 'requests/:request_id', 'request', ['request_id' => '(\d+)'], []),
 		);
 
 		$this->instance->addRoutes($routes);
