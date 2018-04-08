@@ -42,6 +42,14 @@ class Route implements \Serializable
 	private $method;
 
 	/**
+	 * The route pattern to use for matching
+	 *
+	 * @var    string
+	 * @since  __DEPLOY_VERSION__
+	 */
+	private $pattern;
+
+	/**
 	 * The path regex this route processes
 	 *
 	 * @var    string
@@ -58,23 +66,101 @@ class Route implements \Serializable
 	private $routeVariables = [];
 
 	/**
+	 * An array of regex rules keyed using the route variables
+	 *
+	 * @var    array
+	 * @since  __DEPLOY_VERSION__
+	 */
+	private $rules = [];
+
+	/**
 	 * Constructor.
 	 *
-	 * @param   string  $method          The HTTP method this route supports
-	 * @param   string  $regex           The path regex this route processes
-	 * @param   mixed   $controller      The controller which handles this route
-	 * @param   array   $routeVariables  The variables defined by the route
-	 * @param   array   $defaults        The default variables defined by the route
+	 * @param   string  $method      The HTTP method this route supports
+	 * @param   string  $pattern     The route pattern to use for matching
+	 * @param   mixed   $controller  The controller which handles this route
+	 * @param   array   $rules       An array of regex rules keyed using the route variables
+	 * @param   array   $defaults    The default variables defined by the route
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function __construct(string $method, string $regex, $controller, array $routeVariables = [], array $defaults = [])
+	public function __construct(string $method, string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
 		$this->setMethod($method);
-		$this->setRegex($regex);
+		$this->setPattern($pattern);
 		$this->setController($controller);
-		$this->setRouteVariables($routeVariables);
+		$this->setRules($rules);
 		$this->setDefaults($defaults);
+	}
+
+	/**
+	 * Parse the route's pattern to extract the named variables and build a proper regular expression for use when parsing the routes.
+	 *
+	 * @param   string  $pattern  The route pattern to use for matching.
+	 * @param   array   $rules    An array of regex rules keyed using the named route variables.
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	protected function buildRegexAndVarList()
+	{
+		// Sanitize and explode the pattern.
+		$pattern = explode('/', trim(parse_url($this->getPattern(), PHP_URL_PATH), ' /'));
+
+		// Prepare the route variables
+		$vars = [];
+
+		// Initialize regular expression
+		$regex = [];
+
+		// Loop on each segment
+		foreach ($pattern as $segment)
+		{
+			if ($segment == '*')
+			{
+				// Match a splat with no variable.
+				$regex[] = '.*';
+			}
+			elseif (isset($segment[0]) && $segment[0] == '*')
+			{
+				// Match a splat and capture the data to a named variable.
+				$vars[]  = substr($segment, 1);
+				$regex[] = '(.*)';
+			}
+			elseif (isset($segment[0]) && $segment[0] == '\\' && $segment[1] == '*')
+			{
+				// Match an escaped splat segment.
+				$regex[] = '\*' . preg_quote(substr($segment, 2));
+			}
+			elseif ($segment == ':')
+			{
+				// Match an unnamed variable without capture.
+				$regex[] = '([^/]*)';
+			}
+			elseif (isset($segment[0]) && $segment[0] == ':')
+			{
+				// Match a named variable and capture the data.
+				$varName = substr($segment, 1);
+				$vars[]  = $varName;
+
+				// Use the regex in the rules array if it has been defined.
+				$regex[] = array_key_exists($varName, $this->getRules()) ? '(' . $this->getRules()[$varName] . ')' : '([^/]*)';
+			}
+			elseif (isset($segment[0]) && $segment[0] == '\\' && $segment[1] == ':')
+			{
+				// Match a segment with an escaped variable character prefix.
+				$regex[] = preg_quote(substr($segment, 1));
+			}
+			else
+			{
+				// Match the standard segment.
+				$regex[] = preg_quote($segment);
+			}
+		}
+
+		$this->setRegex(chr(1) . '^' . implode('/', $regex) . '$' . chr(1));
+		$this->setRouteVariables($vars);
 	}
 
 	/**
@@ -114,6 +200,18 @@ class Route implements \Serializable
 	}
 
 	/**
+	 * Retrieve the route pattern to use for matching
+	 *
+	 * @return  string
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getPattern(): string
+	{
+		return $this->pattern;
+	}
+
+	/**
 	 * Retrieve the path regex this route processes
 	 *
 	 * @return  string
@@ -122,6 +220,11 @@ class Route implements \Serializable
 	 */
 	public function getRegex(): string
 	{
+		if (!$this->regex)
+		{
+			$this->buildRegexAndVarList();
+		}
+
 		return $this->regex;
 	}
 
@@ -134,7 +237,24 @@ class Route implements \Serializable
 	 */
 	public function getRouteVariables(): array
 	{
+		if (!$this->regex)
+		{
+			$this->buildRegexAndVarList();
+		}
+
 		return $this->routeVariables;
+	}
+
+	/**
+	 * Retrieve the regex rules keyed using the route variables
+	 *
+	 * @return  array
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getRules(): array
+	{
+		return $this->rules;
 	}
 
 	/**
@@ -186,6 +306,25 @@ class Route implements \Serializable
 	}
 
 	/**
+	 * Set the route pattern to use for matching
+	 *
+	 * @param   string  $pattern  The route pattern to use for matching
+	 *
+	 * @return  $this
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function setPattern(string $pattern): self
+	{
+		$this->pattern = $pattern;
+
+		$this->setRegex('');
+		$this->setRouteVariables([]);
+
+		return $this;
+	}
+
+	/**
 	 * Set the path regex this route processes
 	 *
 	 * @param   string  $regex  The path regex this route processes
@@ -218,6 +357,22 @@ class Route implements \Serializable
 	}
 
 	/**
+	 * Set the regex rules keyed using the route variables
+	 *
+	 * @param   array  $rules  The rules defined by the route
+	 *
+	 * @return  $this
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function setRules(array $rules): self
+	{
+		$this->rules = $rules;
+
+		return $this;
+	}
+
+	/**
 	 * String representation of the Router object
 	 *
 	 * @return  string  The string representation of the object or null
@@ -234,8 +389,10 @@ class Route implements \Serializable
 				'controller'     => $controller,
 				'defaults'       => $this->getDefaults(),
 				'method'         => $this->getMethod(),
+				'pattern'        => $this->getPattern(),
 				'regex'          => $this->getRegex(),
 				'routeVariables' => $this->getRouteVariables(),
+				'rules'          => $this->getRules(),
 			]
 		);
 	}
@@ -252,6 +409,14 @@ class Route implements \Serializable
 	 */
 	public function unserialize($serialized)
 	{
-		list ($this->controller, $this->defaults, $this->method, $this->regex, $this->routeVariables) = unserialize($serialized);
+		list (
+			$this->controller,
+			$this->defaults,
+			$this->method,
+			$this->pattern,
+			$this->regex,
+			$this->routeVariables,
+			$this->rules
+		) = unserialize($serialized);
 	}
 }

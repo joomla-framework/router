@@ -85,8 +85,8 @@ class RouterTest extends TestCase
 
 		$rules = array(
 			'GET' => array(
-				new Route('GET', chr(1) . '^login$' . chr(1), 'login', [], []),
-				new Route('GET', chr(1) . '^requests/((\d+))$' . chr(1), 'request', ['request_id'], []),
+				new Route('GET', 'login', 'login', [], []),
+				new Route('GET', 'requests/:request_id', 'request', ['request_id' => '(\d+)'], []),
 			),
 			'PUT' => array(),
 			'POST' => array(),
@@ -197,9 +197,9 @@ class RouterTest extends TestCase
 
 		$rules = array(
 			'GET' => array(
-				new Route('GET', chr(1) . '^login$' . chr(1), 'login', [], []),
-				new Route('GET', chr(1) . '^user/([^/]*)/((\d+))$' . chr(1), 'UserController', ['name', 'id'], []),
-				new Route('GET', chr(1) . '^requests/((\d+))$' . chr(1), 'request', ['request_id'], []),
+				new Route('GET', 'login', 'login', [], []),
+				new Route('GET', 'user/:name/:id', 'UserController', ['id' => '(\d+)'], []),
+				new Route('GET', 'requests/:request_id', 'request', ['request_id' => '(\d+)'], []),
 			),
 			'PUT' => array(),
 			'POST' => array(),

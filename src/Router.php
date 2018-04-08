@@ -71,78 +71,6 @@ class Router implements \Serializable
 	}
 
 	/**
-	 * Parse the given pattern to extract the named variables and build a proper regular expression for use when parsing the routes.
-	 *
-	 * @param   string  $pattern  The route pattern to use for matching.
-	 * @param   array   $rules    An array of regex rules keyed using the named route variables.
-	 *
-	 * @return  array
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	protected function buildRegexAndVarList(string $pattern, array $rules = []): array
-	{
-		// Sanitize and explode the pattern.
-		$pattern = explode('/', trim(parse_url((string) $pattern, PHP_URL_PATH), ' /'));
-
-		// Prepare the route variables
-		$vars = [];
-
-		// Initialize regular expression
-		$regex = [];
-
-		// Loop on each segment
-		foreach ($pattern as $segment)
-		{
-			if ($segment == '*')
-			{
-				// Match a splat with no variable.
-				$regex[] = '.*';
-			}
-			elseif (isset($segment[0]) && $segment[0] == '*')
-			{
-				// Match a splat and capture the data to a named variable.
-				$vars[] = substr($segment, 1);
-				$regex[] = '(.*)';
-			}
-			elseif (isset($segment[0]) && $segment[0] == '\\' && $segment[1] == '*')
-			{
-				// Match an escaped splat segment.
-				$regex[] = '\*' . preg_quote(substr($segment, 2));
-			}
-			elseif ($segment == ':')
-			{
-				// Match an unnamed variable without capture.
-				$regex[] = '([^/]*)';
-			}
-			elseif (isset($segment[0]) && $segment[0] == ':')
-			{
-				// Match a named variable and capture the data.
-				$varName = substr($segment, 1);
-				$vars[] = $varName;
-
-				// Use the regex in the rules array if it has been defined.
-				$regex[] = array_key_exists($varName, $rules) ? '(' . $rules[$varName] . ')' : '([^/]*)';
-			}
-			elseif (isset($segment[0]) && $segment[0] == '\\' && $segment[1] == ':')
-			{
-				// Match a segment with an escaped variable character prefix.
-				$regex[] = preg_quote(substr($segment, 1));
-			}
-			else
-			{
-				// Match the standard segment.
-				$regex[] = preg_quote($segment);
-			}
-		}
-
-		return [
-			chr(1) . '^' . implode('/', $regex) . '$' . chr(1),
-			$vars,
-		];
-	}
-
-	/**
 	 * Add an array of route maps to the router.  If the pattern already exists it will be overwritten.
 	 *
 	 * @param   array  $routes  A list of route maps to add to the router as $pattern => $controller.
@@ -179,9 +107,7 @@ class Router implements \Serializable
 				$rules    = $route['rules'] ?? [];
 				$method   = $route['method'] ?? 'GET';
 
-				list($regex, $vars) = $this->buildRegexAndVarList($route['pattern'], $rules);
-
-				$this->addRoute(new Route($method, $regex, $route['controller'], $vars, $defaults));
+				$this->addRoute(new Route($method, $route['pattern'], $route['controller'], $rules, $defaults));
 			}
 		}
 
@@ -276,9 +202,7 @@ class Router implements \Serializable
 	 */
 	public function get(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
-
-		return $this->addRoute(new Route('GET', $regex, $controller, $vars, $defaults));
+		return $this->addRoute(new Route('GET', $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -295,9 +219,7 @@ class Router implements \Serializable
 	 */
 	public function post(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
-
-		return $this->addRoute(new Route('POST', $regex, $controller, $vars, $defaults));
+		return $this->addRoute(new Route('POST', $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -314,9 +236,7 @@ class Router implements \Serializable
 	 */
 	public function put(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
-
-		return $this->addRoute(new Route('PUT', $regex, $controller, $vars, $defaults));
+		return $this->addRoute(new Route('PUT', $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -333,9 +253,7 @@ class Router implements \Serializable
 	 */
 	public function delete(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
-
-		return $this->addRoute(new Route('DELETE', $regex, $controller, $vars, $defaults));
+		return $this->addRoute(new Route('DELETE', $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -352,9 +270,7 @@ class Router implements \Serializable
 	 */
 	public function head(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
-
-		return $this->addRoute(new Route('HEAD', $regex, $controller, $vars, $defaults));
+		return $this->addRoute(new Route('HEAD', $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -371,9 +287,7 @@ class Router implements \Serializable
 	 */
 	public function options(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
-
-		return $this->addRoute(new Route('OPTIONS', $regex, $controller, $vars, $defaults));
+		return $this->addRoute(new Route('OPTIONS', $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -390,9 +304,7 @@ class Router implements \Serializable
 	 */
 	public function trace(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
-
-		return $this->addRoute(new Route('TRACE', $regex, $controller, $vars, $defaults));
+		return $this->addRoute(new Route('TRACE', $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -409,9 +321,7 @@ class Router implements \Serializable
 	 */
 	public function patch(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
-
-		return $this->addRoute(new Route('PATCH', $regex, $controller, $vars, $defaults));
+		return $this->addRoute(new Route('PATCH', $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -428,11 +338,9 @@ class Router implements \Serializable
 	 */
 	public function all(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
-
 		foreach ($this->routes as $method => $routes)
 		{
-			$this->addRoute(new Route($method, $regex, $controller, $vars, $defaults));
+			$this->addRoute(new Route($method, $pattern, $controller, $rules, $defaults));
 		}
 
 		return $this;
