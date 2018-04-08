@@ -7,6 +7,7 @@
 namespace Joomla\Router\Tests;
 
 use Joomla\Router\Exception\RouteNotFoundException;
+use Joomla\Router\Route;
 use Joomla\Router\Router;
 use PHPUnit\Framework\TestCase;
 
@@ -39,23 +40,9 @@ class RouterTest extends TestCase
 	 */
 	public function test__construct()
 	{
-		$emptyRoutes = array(
-			'GET' => array(),
-			'PUT' => array(),
-			'POST' => array(),
-			'DELETE' => array(),
-			'HEAD' => array(),
-			'OPTIONS' => array(),
-			'TRACE' => array(),
-			'PATCH' => array()
-		);
-
-		$router = new Router;
-
-		$this->assertAttributeEquals(
-			$emptyRoutes,
+		$this->assertAttributeEmpty(
 			'routes',
-			$router,
+			new Router,
 			'A Router should have no known routes by default.'
 		);
 	}
@@ -83,27 +70,8 @@ class RouterTest extends TestCase
 		);
 
 		$rules = array(
-			'GET' => array(
-				array(
-					'regex' => chr(1) . '^login$' . chr(1),
-					'vars' => array(),
-					'controller' => 'login',
-					'defaults' => array()
-				),
-				array(
-					'regex' => chr(1) . '^requests/((\d+))$' . chr(1),
-					'vars' => array('request_id'),
-					'controller' => 'request',
-					'defaults' => array()
-				)
-			),
-			'PUT' => array(),
-			'POST' => array(),
-			'DELETE' => array(),
-			'HEAD' => array(),
-			'OPTIONS' => array(),
-			'TRACE' => array(),
-			'PATCH' => array()
+			new Route(['GET'], 'login', 'login', [], []),
+			new Route(['GET'], 'requests/:request_id', 'request', ['request_id' => '(\d+)'], []),
 		);
 
 		$router = new Router($routes);
@@ -124,25 +92,13 @@ class RouterTest extends TestCase
 	 */
 	public function testAddRoute()
 	{
-		$this->instance->addRoute('GET', 'foo', 'MyApplicationFoo');
+		$route = new Route(['GET'], 'foo', 'MyApplicationFoo', [], []);
+
+		$this->instance->addRoute($route);
 
 		$this->assertAttributeEquals(
 			array(
-				'GET' => array(
-					array(
-						'regex' => chr(1) . '^foo$' . chr(1),
-						'vars' => array(),
-						'controller' => 'MyApplicationFoo',
-						'defaults' => array()
-					)
-				),
-				'PUT' => array(),
-				'POST' => array(),
-				'DELETE' => array(),
-				'HEAD' => array(),
-				'OPTIONS' => array(),
-				'TRACE' => array(),
-				'PATCH' => array()
+				$route,
 			),
 			'routes',
 			$this->instance
@@ -156,25 +112,13 @@ class RouterTest extends TestCase
 	 */
 	public function testAddRouteWithDefaults()
 	{
-		$this->instance->addRoute('GET', 'foo', 'MyApplicationFoo', [], ['default1' => 'foo']);
+		$route = new Route(['GET'], 'foo', 'MyApplicationFoo', [], ['default1' => 'foo']);
+
+		$this->instance->addRoute($route);
 
 		$this->assertAttributeEquals(
 			array(
-				'GET' => array(
-					array(
-						'regex' => chr(1) . '^foo$' . chr(1),
-						'vars' => array(),
-						'controller' => 'MyApplicationFoo',
-						'defaults' => ['default1' => 'foo']
-					)
-				),
-				'PUT' => array(),
-				'POST' => array(),
-				'DELETE' => array(),
-				'HEAD' => array(),
-				'OPTIONS' => array(),
-				'TRACE' => array(),
-				'PATCH' => array()
+				$route,
 			),
 			'routes',
 			$this->instance
@@ -211,36 +155,9 @@ class RouterTest extends TestCase
 		);
 
 		$rules = array(
-			'GET' => array(
-				array(
-					'regex' => chr(1) . '^login$' . chr(1),
-					'vars' => array(),
-					'controller' => 'login',
-					'defaults' => array()
-				),
-				array(
-					'regex' => chr(1) . '^user/([^/]*)/((\d+))$' . chr(1),
-					'vars' => array(
-						'name',
-						'id'
-					),
-					'controller' => 'UserController',
-					'defaults' => array()
-				),
-				array(
-					'regex' => chr(1) . '^requests/((\d+))$' . chr(1),
-					'vars' => array('request_id'),
-					'controller' => 'request',
-					'defaults' => array()
-				)
-			),
-			'PUT' => array(),
-			'POST' => array(),
-			'DELETE' => array(),
-			'HEAD' => array(),
-			'OPTIONS' => array(),
-			'TRACE' => array(),
-			'PATCH' => array()
+			new Route(['GET'], 'login', 'login', [], []),
+			new Route(['GET'], 'user/:name/:id', 'UserController', ['id' => '(\d+)'], []),
+			new Route(['GET'], 'requests/:request_id', 'request', ['request_id' => '(\d+)'], []),
 		);
 
 		$this->instance->addRoutes($routes);
@@ -276,7 +193,8 @@ class RouterTest extends TestCase
 		$actual = $this->instance->parseRoute($r);
 
 		// Test the assertions.
-		$this->assertEquals($i, $actual, 'Incorrect value returned.');
+		$this->assertSame($i['controller'], $actual->getController());
+		$this->assertEquals($i['vars'], $actual->getRouteVariables());
 	}
 
 	/**

@@ -8,8 +8,6 @@
 
 namespace Joomla\Router;
 
-use Jeremeamia\SuperClosure\SerializableClosure;
-
 /**
  * A path router.
  *
@@ -18,28 +16,12 @@ use Jeremeamia\SuperClosure\SerializableClosure;
 class Router implements \Serializable
 {
 	/**
-	 * An array of rules, each rule being an associative for routing the request.
+	 * An array of Route objects defining the supported paths.
 	 *
-	 * Example: array(
-	 *     'regex' => $regex,
-	 *     'vars' => $vars,
-	 *     'controller' => $controller,
-	 *     'defaults' => $defaults,
-	 * )
-	 *
-	 * @var    array
+	 * @var    Route[]
 	 * @since  __DEPLOY_VERSION__
 	 */
-	protected $routes = [
-		'GET'     => [],
-		'PUT'     => [],
-		'POST'    => [],
-		'DELETE'  => [],
-		'HEAD'    => [],
-		'OPTIONS' => [],
-		'TRACE'   => [],
-		'PATCH'   => []
-	];
+	protected $routes = [];
 
 	/**
 	 * Constructor.
@@ -59,100 +41,17 @@ class Router implements \Serializable
 	/**
 	 * Add a route of the specified method to the router. If the pattern already exists it will be overwritten.
 	 *
-	 * @param   string  $method      Request method to match. One of GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE or PATCH
-	 * @param   string  $pattern     The route pattern to use for matching.
-	 * @param   mixed   $controller  The controller to map to the given pattern.
-	 * @param   array   $rules       An array of regex rules keyed using the named route variables.
-	 * @param   array   $defaults    An array of default values that are used when the URL is matched.
+	 * @param   Route  $route  The route definition
 	 *
 	 * @return  $this
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function addRoute(string $method, string $pattern, $controller, array $rules = [], array $defaults = [])
+	public function addRoute(Route $route): self
 	{
-		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
-
-		$this->routes[strtoupper($method)][] = [
-			'regex'      => $regex,
-			'vars'       => $vars,
-			'controller' => $controller,
-			'defaults'   => $defaults
-		];
+		$this->routes[] = $route;
 
 		return $this;
-	}
-
-	/**
-	 * Parse the given pattern to extract the named variables and build a proper regular expression for use when parsing the routes.
-	 *
-	 * @param   string  $pattern  The route pattern to use for matching.
-	 * @param   array   $rules    An array of regex rules keyed using the named route variables.
-	 *
-	 * @return  array
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	protected function buildRegexAndVarList(string $pattern, array $rules = []): array
-	{
-		// Sanitize and explode the pattern.
-		$pattern = explode('/', trim(parse_url((string) $pattern, PHP_URL_PATH), ' /'));
-
-		// Prepare the route variables
-		$vars = [];
-
-		// Initialize regular expression
-		$regex = [];
-
-		// Loop on each segment
-		foreach ($pattern as $segment)
-		{
-			if ($segment == '*')
-			{
-				// Match a splat with no variable.
-				$regex[] = '.*';
-			}
-			elseif (isset($segment[0]) && $segment[0] == '*')
-			{
-				// Match a splat and capture the data to a named variable.
-				$vars[] = substr($segment, 1);
-				$regex[] = '(.*)';
-			}
-			elseif (isset($segment[0]) && $segment[0] == '\\' && $segment[1] == '*')
-			{
-				// Match an escaped splat segment.
-				$regex[] = '\*' . preg_quote(substr($segment, 2));
-			}
-			elseif ($segment == ':')
-			{
-				// Match an unnamed variable without capture.
-				$regex[] = '([^/]*)';
-			}
-			elseif (isset($segment[0]) && $segment[0] == ':')
-			{
-				// Match a named variable and capture the data.
-				$varName = substr($segment, 1);
-				$vars[] = $varName;
-
-				// Use the regex in the rules array if it has been defined.
-				$regex[] = array_key_exists($varName, $rules) ? '(' . $rules[$varName] . ')' : '([^/]*)';
-			}
-			elseif (isset($segment[0]) && $segment[0] == '\\' && $segment[1] == ':')
-			{
-				// Match a segment with an escaped variable character prefix.
-				$regex[] = preg_quote(substr($segment, 1));
-			}
-			else
-			{
-				// Match the standard segment.
-				$regex[] = preg_quote($segment);
-			}
-		}
-
-		return [
-			chr(1) . '^' . implode('/', $regex) . '$' . chr(1),
-			$vars
-		];
 	}
 
 	/**
@@ -169,24 +68,31 @@ class Router implements \Serializable
 	{
 		foreach ($routes as $route)
 		{
-			// Ensure a `pattern` key exists
-			if (! array_key_exists('pattern', $route))
+			if ($route instanceof Route)
 			{
-				throw new \UnexpectedValueException('Route map must contain a pattern variable.');
+				$this->addRoute($route);
 			}
-
-			// Ensure a `controller` key exists
-			if (! array_key_exists('controller', $route))
+			else
 			{
-				throw new \UnexpectedValueException('Route map must contain a controller variable.');
+				// Ensure a `pattern` key exists
+				if (! array_key_exists('pattern', $route))
+				{
+					throw new \UnexpectedValueException('Route map must contain a pattern variable.');
+				}
+
+				// Ensure a `controller` key exists
+				if (! array_key_exists('controller', $route))
+				{
+					throw new \UnexpectedValueException('Route map must contain a controller variable.');
+				}
+
+				// If defaults, rules have been specified, add them as well.
+				$defaults = $route['defaults'] ?? [];
+				$rules    = $route['rules'] ?? [];
+				$methods  = $route['methods'] ?? ['GET'];
+
+				$this->addRoute(new Route($methods, $route['pattern'], $route['controller'], $rules, $defaults));
 			}
-
-			// If defaults, rules have been specified, add them as well.
-			$defaults = $route['defaults'] ?? [];
-			$rules    = $route['rules'] ?? [];
-			$method   = $route['method'] ?? 'GET';
-
-			$this->addRoute($method, $route['pattern'], $route['controller'], $rules, $defaults);
 		}
 
 		return $this;
@@ -198,7 +104,7 @@ class Router implements \Serializable
 	 * @param   string  $route   The route string for which to find and execute a controller.
 	 * @param   string  $method  Request method to match. One of GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE or PATCH
 	 *
-	 * @return  array   An array containing the controller and the matched variables.
+	 * @return  ResolvedRoute
 	 *
 	 * @since   1.0
 	 * @throws  \InvalidArgumentException
@@ -208,60 +114,34 @@ class Router implements \Serializable
 	{
 		$method = strtoupper($method);
 
-		if (! array_key_exists($method, $this->routes))
-		{
-			throw new \InvalidArgumentException(sprintf('%s is not a valid HTTP method.', $method));
-		}
-
 		// Get the path from the route and remove and leading or trailing slash.
 		$route = trim(parse_url($route, PHP_URL_PATH), ' /');
 
 		// Iterate through all of the known routes looking for a match.
-		foreach ($this->routes[$method] as $rule)
+		foreach ($this->routes as $rule)
 		{
-			if (preg_match($rule['regex'], $route, $matches))
+			if (preg_match($rule->getRegex(), $route, $matches))
 			{
-				// If we have gotten this far then we have a positive match.
-				$vars = $rule['defaults'];
+				// Check if the route supports this method
+				if (!empty($rule->getMethods()) && !in_array($method, $rule->getMethods()))
+				{
+					throw new Exception\MethodNotAllowedException(
+						array_unique($rule->getMethods()),
+						sprintf('Route `%s` does not support `%s` requests.', $route, strtoupper($method)),
+						405
+					);
+				}
 
-				foreach ($rule['vars'] as $i => $var)
+				// If we have gotten this far then we have a positive match.
+				$vars = $rule->getDefaults();
+
+				foreach ($rule->getRouteVariables() as $i => $var)
 				{
 					$vars[$var] = $matches[$i + 1];
 				}
 
-				return [
-					'controller' => $rule['controller'],
-					'vars'       => $vars
-				];
+				return new ResolvedRoute($rule->getController(), $vars, $route);
 			}
-		}
-
-		// See if this route is available with another method
-		$allowedMethods = [];
-
-		foreach ($this->routes as $knownMethod => $rules)
-		{
-			if ($method === $knownMethod)
-			{
-				continue;
-			}
-
-			foreach ($rules as $rule)
-			{
-				if (preg_match($rule['regex'], $route, $matches))
-				{
-					$allowedMethods[] = $knownMethod;
-				}
-			}
-		}
-
-		if (!empty($allowedMethods))
-		{
-			throw new Exception\MethodNotAllowedException(
-				array_unique($allowedMethods),
-				sprintf('Route `%s` does not support `%s` requests.', $route, strtoupper($method)),
-				405
-			);
 		}
 
 		throw new Exception\RouteNotFoundException(sprintf('Unable to handle request for route `%s`.', $route), 404);
@@ -281,7 +161,7 @@ class Router implements \Serializable
 	 */
 	public function get(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		return $this->addRoute('GET', $pattern, $controller, $rules, $defaults);
+		return $this->addRoute(new Route(['GET'], $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -298,7 +178,7 @@ class Router implements \Serializable
 	 */
 	public function post(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		return $this->addRoute('POST', $pattern, $controller, $rules, $defaults);
+		return $this->addRoute(new Route(['POST'], $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -315,7 +195,7 @@ class Router implements \Serializable
 	 */
 	public function put(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		return $this->addRoute('PUT', $pattern, $controller, $rules, $defaults);
+		return $this->addRoute(new Route(['PUT'], $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -332,7 +212,7 @@ class Router implements \Serializable
 	 */
 	public function delete(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		return $this->addRoute('DELETE', $pattern, $controller, $rules, $defaults);
+		return $this->addRoute(new Route(['DELETE'], $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -349,7 +229,7 @@ class Router implements \Serializable
 	 */
 	public function head(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		return $this->addRoute('HEAD', $pattern, $controller, $rules, $defaults);
+		return $this->addRoute(new Route(['HEAD'], $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -366,7 +246,7 @@ class Router implements \Serializable
 	 */
 	public function options(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		return $this->addRoute('OPTIONS', $pattern, $controller, $rules, $defaults);
+		return $this->addRoute(new Route(['OPTIONS'], $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -383,7 +263,7 @@ class Router implements \Serializable
 	 */
 	public function trace(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		return $this->addRoute('TRACE', $pattern, $controller, $rules, $defaults);
+		return $this->addRoute(new Route(['TRACE'], $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -400,7 +280,7 @@ class Router implements \Serializable
 	 */
 	public function patch(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		return $this->addRoute('PATCH', $pattern, $controller, $rules, $defaults);
+		return $this->addRoute(new Route(['PATCH'], $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -409,25 +289,15 @@ class Router implements \Serializable
 	 * @param   string  $pattern     The route pattern to use for matching.
 	 * @param   mixed   $controller  The controller to map to the given pattern.
 	 * @param   array   $rules       An array of regex rules keyed using the route variables.
+	 * @param   array   $defaults    An array of default values that are used when the URL is matched.
 	 *
 	 * @return  $this
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function all(string $pattern, $controller, array $rules = [])
+	public function all(string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
-		list($regex, $vars) = $this->buildRegexAndVarList($pattern, $rules);
-
-		foreach ($this->routes as $method => $routes)
-		{
-			$this->routes[$method][] = [
-				'regex'      => $regex,
-				'vars'       => $vars,
-				'controller' => $controller
-			];
-		}
-
-		return $this;
+		return $this->addRoute(new Route([], $pattern, $controller, $rules, $defaults));
 	}
 
 	/**
@@ -440,20 +310,7 @@ class Router implements \Serializable
 	 */
 	public function serialize()
 	{
-		$routesCopy = $this->routes;
-
-		foreach ($routesCopy as $httpRequestMethod => $routes)
-		{
-			foreach ($routes as $i => $route)
-			{
-				if ($route['controller'] instanceof \Closure)
-				{
-					$routesCopy[$httpRequestMethod][$i]['controller'] = new SerializableClosure($route['controller']);
-				}
-			}
-		}
-
-		return serialize($routesCopy);
+		return serialize($this->routes);
 	}
 
 	/**
