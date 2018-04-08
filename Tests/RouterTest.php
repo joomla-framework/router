@@ -115,7 +115,7 @@ class RouterTest extends TestCase
 	 */
 	public function testAddRoute()
 	{
-		$route = new Route('GET', chr(1) . '^foo$' . chr(1), 'MyApplicationFoo', [], []);
+		$route = new Route('GET', 'foo', 'MyApplicationFoo', [], []);
 
 		$this->instance->addRoute($route);
 
@@ -144,7 +144,7 @@ class RouterTest extends TestCase
 	 */
 	public function testAddRouteWithDefaults()
 	{
-		$route = new Route('GET', chr(1) . '^foo$' . chr(1), 'MyApplicationFoo', [], ['default1' => 'foo']);
+		$route = new Route('GET', 'foo', 'MyApplicationFoo', [], ['default1' => 'foo']);
 
 		$this->instance->addRoute($route);
 
