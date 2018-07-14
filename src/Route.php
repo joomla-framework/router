@@ -156,7 +156,7 @@ class Route implements \Serializable
 			}
 		}
 
-		$this->setRegex(chr(1) . '^' . implode('/', $regex) . '$' . chr(1));
+		$this->setRegex(\chr(1) . '^' . implode('/', $regex) . '$' . \chr(1));
 		$this->setRouteVariables($vars);
 	}
 
