@@ -406,7 +406,7 @@ class Route implements \Serializable
 	 */
 	public function unserialize($serialized)
 	{
-		list (
+		list(
 			$this->controller,
 			$this->defaults,
 			$this->methods,

@@ -123,7 +123,7 @@ class Router implements \Serializable
 			if (preg_match($rule->getRegex(), $route, $matches))
 			{
 				// Check if the route supports this method
-				if (!empty($rule->getMethods()) && !in_array($method, $rule->getMethods()))
+				if (!empty($rule->getMethods()) && !\in_array($method, $rule->getMethods()))
 				{
 					throw new Exception\MethodNotAllowedException(
 						array_unique($rule->getMethods()),
