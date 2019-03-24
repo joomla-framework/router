@@ -37,12 +37,12 @@ class RouterTest extends TestCase
 	 * @testdox  Ensure the Router is instantiated correctly with no injected routes.
 	 *
 	 * @covers   Joomla\Router\Router::__construct
+	 * @covers   Joomla\Router\Router::getRoutes
 	 */
 	public function test__construct()
 	{
-		$this->assertAttributeEmpty(
-			'routes',
-			new Router,
+		$this->assertEmpty(
+			(new Router)->getRoutes(),
 			'A Router should have no known routes by default.'
 		);
 	}
@@ -52,6 +52,7 @@ class RouterTest extends TestCase
 	 *
 	 * @covers   Joomla\Router\Router::__construct
 	 * @uses     Joomla\Router\Router::addRoutes
+	 * @uses     Joomla\Router\Router::getRoutes
 	 */
 	public function test__constructNotEmpty()
 	{
@@ -76,10 +77,9 @@ class RouterTest extends TestCase
 
 		$router = new Router($routes);
 
-		$this->assertAttributeEquals(
+		$this->assertEquals(
 			$rules,
-			'routes',
-			$router,
+			$router->getRoutes(),
 			'When passing an array of routes when instantiating a Router, the maps property should be set accordingly.'
 		);
 	}
@@ -88,6 +88,7 @@ class RouterTest extends TestCase
 	 * @testdox  Ensure a route is added to the Router.
 	 *
 	 * @covers   Joomla\Router\Router::addRoute
+	 * @covers   Joomla\Router\Router::getRoutes
 	 * @uses     Joomla\Router\Router::buildRegexAndVarList
 	 */
 	public function testAddRoute()
@@ -96,12 +97,11 @@ class RouterTest extends TestCase
 
 		$this->instance->addRoute($route);
 
-		$this->assertAttributeEquals(
+		$this->assertEquals(
 			array(
 				$route,
 			),
-			'routes',
-			$this->instance
+			$this->instance->getRoutes()
 		);
 	}
 
@@ -109,6 +109,7 @@ class RouterTest extends TestCase
 	 * @testdox  Ensure a route is added to the Router.
 	 *
 	 * @covers   Joomla\Router\Router::addRoute
+	 * @covers   Joomla\Router\Router::getRoutes
 	 */
 	public function testAddRouteWithDefaults()
 	{
@@ -116,12 +117,11 @@ class RouterTest extends TestCase
 
 		$this->instance->addRoute($route);
 
-		$this->assertAttributeEquals(
+		$this->assertEquals(
 			array(
 				$route,
 			),
-			'routes',
-			$this->instance
+			$this->instance->getRoutes()
 		);
 	}
 
@@ -129,6 +129,7 @@ class RouterTest extends TestCase
 	 * @testdox  Ensure several routes are added to the Router.
 	 *
 	 * @covers   Joomla\Router\Router::addRoutes
+	 * @covers   Joomla\Router\Router::getRoutes
 	 * @uses     Joomla\Router\Router::addRoute
 	 */
 	public function testAddRoutes()
@@ -161,7 +162,8 @@ class RouterTest extends TestCase
 		);
 
 		$this->instance->addRoutes($routes);
-		$this->assertAttributeEquals($rules, 'routes', $this->instance);
+
+		$this->assertEquals($rules, $this->instance->getRoutes());
 	}
 
 	/**

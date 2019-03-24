@@ -99,6 +99,18 @@ class Router implements \Serializable
 	}
 
 	/**
+	 * Get the routes registered with this router.
+	 *
+	 * @return  Route[]
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getRoutes(): array
+	{
+		return $this->routes;
+	}
+
+	/**
 	 * Parse the given route and return the name of a controller mapped to the given route.
 	 *
 	 * @param   string  $route   The route string for which to find and execute a controller.
