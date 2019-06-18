@@ -12,7 +12,7 @@
         "jeremeamia/superclosure": "~1.0",
         "joomla/coding-standards": "~2.0@alpha",
         "joomla/console": "~2.0",
-        "phpunit/phpunit": "~6.3"
+        "phpunit/phpunit": "~8.2"
     },
     "suggest": {
         "jeremeamia/superclosure": "If you use Closure controllers, and want to be able to cache / serialize the router, please install jeremeamia/superclosure:~1.0",

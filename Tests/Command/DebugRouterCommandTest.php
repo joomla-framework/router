@@ -38,7 +38,7 @@ class DebugRouterCommandTest extends TestCase
 		$this->assertSame(0, $command->execute($input, $output));
 
 		$screenOutput = $output->fetch();
-		$this->assertContains('The router has no routes.', $screenOutput);
+		$this->assertStringContainsString('The router has no routes.', $screenOutput);
 	}
 
 	public function testTheCommandIsExecutedWithAConfiguredRouter()
@@ -65,8 +65,8 @@ class DebugRouterCommandTest extends TestCase
 
 		$screenOutput = $output->fetch();
 
-		$this->assertContains('user/:name/:id', $screenOutput);
-		$this->assertNotContains('UserController', $screenOutput);
+		$this->assertStringContainsString('user/:name/:id', $screenOutput);
+		$this->assertStringNotContainsString('UserController', $screenOutput);
 	}
 
 	public function testTheCommandIsExecutedWithAConfiguredRouterAndControllersAreDisplayed()
@@ -94,7 +94,7 @@ class DebugRouterCommandTest extends TestCase
 
 		$screenOutput = $output->fetch();
 
-		$this->assertContains('user/:name/:id', $screenOutput);
-		$this->assertContains('UserController', $screenOutput);
+		$this->assertStringContainsString('user/:name/:id', $screenOutput);
+		$this->assertStringContainsString('UserController', $screenOutput);
 	}
 }

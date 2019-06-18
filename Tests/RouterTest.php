@@ -6,6 +6,7 @@
 
 namespace Joomla\Router\Tests;
 
+use Joomla\Router\Exception\MethodNotAllowedException;
 use Joomla\Router\Exception\RouteNotFoundException;
 use Joomla\Router\Route;
 use Joomla\Router\Router;
@@ -26,7 +27,7 @@ class RouterTest extends TestCase
 	/**
 	 * {@inheritdoc}
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -56,24 +57,24 @@ class RouterTest extends TestCase
 	 */
 	public function test__constructNotEmpty()
 	{
-		$routes = array(
-			array(
-				'pattern' => 'login',
-				'controller' => 'login'
-			),
-			array(
-				'pattern' => 'requests/:request_id',
+		$routes = [
+			[
+				'pattern'    => 'login',
+				'controller' => 'login',
+			],
+			[
+				'pattern'    => 'requests/:request_id',
 				'controller' => 'request',
-				'rules' => array(
-					'request_id' => '(\d+)'
-				)
-			)
-		);
+				'rules'      => [
+					'request_id' => '(\d+)',
+				],
+			],
+		];
 
-		$rules = array(
+		$rules = [
 			new Route(['GET'], 'login', 'login', [], []),
 			new Route(['GET'], 'requests/:request_id', 'request', ['request_id' => '(\d+)'], []),
-		);
+		];
 
 		$router = new Router($routes);
 
@@ -98,9 +99,9 @@ class RouterTest extends TestCase
 		$this->instance->addRoute($route);
 
 		$this->assertEquals(
-			array(
+			[
 				$route,
-			),
+			],
 			$this->instance->getRoutes()
 		);
 	}
@@ -118,9 +119,9 @@ class RouterTest extends TestCase
 		$this->instance->addRoute($route);
 
 		$this->assertEquals(
-			array(
+			[
 				$route,
-			),
+			],
 			$this->instance->getRoutes()
 		);
 	}
@@ -134,32 +135,32 @@ class RouterTest extends TestCase
 	 */
 	public function testAddRoutes()
 	{
-		$routes = array(
-			array(
-				'pattern' => 'login',
-				'controller' => 'login'
-			),
-			array(
-				'pattern' => 'user/:name/:id',
+		$routes = [
+			[
+				'pattern'    => 'login',
+				'controller' => 'login',
+			],
+			[
+				'pattern'    => 'user/:name/:id',
 				'controller' => 'UserController',
-				'rules' => array(
-					'id' => '(\d+)'
-				)
-			),
-			array(
-				'pattern' => 'requests/:request_id',
+				'rules'      => [
+					'id' => '(\d+)',
+				],
+			],
+			[
+				'pattern'    => 'requests/:request_id',
 				'controller' => 'request',
-				'rules' => array(
-					'request_id' => '(\d+)'
-				)
-			)
-		);
+				'rules'      => [
+					'request_id' => '(\d+)',
+				],
+			],
+		];
 
-		$rules = array(
+		$rules = [
 			new Route(['GET'], 'login', 'login', [], []),
 			new Route(['GET'], 'user/:name/:id', 'UserController', ['id' => '(\d+)'], []),
 			new Route(['GET'], 'requests/:request_id', 'request', ['request_id' => '(\d+)'], []),
-		);
+		];
 
 		$this->instance->addRoutes($routes);
 
@@ -204,12 +205,12 @@ class RouterTest extends TestCase
 	 *
 	 * @covers   Joomla\Router\Router::parseRoute
 	 * @uses     Joomla\Router\Router::get
-	 *
-	 * @expectedException  Joomla\Router\Exception\MethodNotAllowedException
-	 * @expectedExceptionMessage  Route `test/foo/path/bar` does not support `POST` requests.
 	 */
 	public function testParseRouteWithMethodNotAllowedError()
 	{
+		$this->expectException(MethodNotAllowedException::class);
+		$this->expectExceptionMessage('Route `test/foo/path/bar` does not support `POST` requests.');
+
 		$this->instance->get('test/foo/path/bar', 'TestController');
 
 		// Execute the route parsing.
@@ -219,55 +220,58 @@ class RouterTest extends TestCase
 	/**
 	 * Provides test data for the testParseRoute method.
 	 *
-	 * @return  array
+	 * @return  \Generator
 	 */
-	public static function seedTestParseRoute()
+	public function seedTestParseRoute(): \Generator
 	{
 		// Route Pattern, Throws Exception, Return Data, MapSetup
-		return array(
-			array('', true, array(), false),
-			array('articles/4', true, array(), false),
-			array('', false, array('controller' => 'DefaultController', 'vars' => array()), true),
-			array('login', false, array('controller' => 'LoginController', 'vars' => array()), true),
-			array('articles', false, array('controller' => 'ArticlesController', 'vars' => array()), true),
-			array('articles/4', false, array('controller' => 'ArticleController', 'vars' => array('article_id' => 4)), true),
-			array('articles/4/crap', true, array(), true),
-			array('test', true, array(), true),
-			array('test/foo', true, array(), true),
-			array('test/foo/path', true, array(), true),
-			array('test/foo/path/bar', false, array('controller' => 'TestController', 'vars' => array('seg1' => 'foo', 'seg2' => 'bar')), true),
-			array('content/article-1/*', false, array('controller' => 'ContentController', 'vars' => array()), true),
-			array(
-				'content/cat-1/article-1',
-				false,
-				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1', 'article' => 'article-1')),
-				true
-			),
-			array(
-				'content/cat-1/cat-2/article-1',
-				false,
-				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1/cat-2', 'article' => 'article-1')),
-				true
-			),
-			array(
-				'content/cat-1/cat-2/cat-3/article-1',
-				false,
-				array('controller' => 'ArticleController', 'vars' => array('category' => 'cat-1/cat-2/cat-3', 'article' => 'article-1')),
-				true
-			),
-			array(
-				'default_option/4',
-				false,
-				array('controller' => 'ArticleController', 'vars' => array('article_id' => 4, 'option' => 'content')),
-				true
-			),
-			array(
-				'overriden_option/article/4',
-				false,
-				array('controller' => 'ArticleController', 'vars' => array('id' => 4, 'option' => 'content', 'view' => 'article')),
-				true
-			),
-		);
+		yield ['', true, [], false];
+		yield ['articles/4', true, [], false];
+		yield ['', false, ['controller' => 'DefaultController', 'vars' => []], true];
+		yield ['login', false, ['controller' => 'LoginController', 'vars' => []], true];
+		yield ['articles', false, ['controller' => 'ArticlesController', 'vars' => []], true];
+		yield ['articles/4', false, ['controller' => 'ArticleController', 'vars' => ['article_id' => 4]], true];
+		yield ['articles/4/crap', true, [], true];
+		yield ['test', true, [], true];
+		yield ['test/foo', true, [], true];
+		yield ['test/foo/path', true, [], true];
+		yield ['test/foo/path/bar', false, ['controller' => 'TestController', 'vars' => ['seg1' => 'foo', 'seg2' => 'bar']], true];
+		yield ['content/article-1/*', false, ['controller' => 'ContentController', 'vars' => []], true];
+
+		yield [
+			'content/cat-1/article-1',
+			false,
+			['controller' => 'ArticleController', 'vars' => ['category' => 'cat-1', 'article' => 'article-1']],
+			true,
+		];
+
+		yield [
+			'content/cat-1/cat-2/article-1',
+			false,
+			['controller' => 'ArticleController', 'vars' => ['category' => 'cat-1/cat-2', 'article' => 'article-1']],
+			true,
+		];
+
+		yield [
+			'content/cat-1/cat-2/cat-3/article-1',
+			false,
+			['controller' => 'ArticleController', 'vars' => ['category' => 'cat-1/cat-2/cat-3', 'article' => 'article-1']],
+			true,
+		];
+
+		yield [
+			'default_option/4',
+			false,
+			['controller' => 'ArticleController', 'vars' => ['article_id' => 4, 'option' => 'content']],
+			true,
+		];
+
+		yield [
+			'overriden_option/article/4',
+			false,
+			['controller' => 'ArticleController', 'vars' => ['id' => 4, 'option' => 'content', 'view' => 'article']],
+			true,
+		];
 	}
 
 	/**
@@ -275,58 +279,58 @@ class RouterTest extends TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setRoutes()
+	protected function setRoutes(): void
 	{
 		$this->instance->addRoutes(
-			array(
-				array(
-				   'pattern' => 'login',
-				   'controller' => 'LoginController'
-				),
-				array(
-				   'pattern' => 'logout',
-				   'controller' => 'LogoutController'
-				),
-				array(
-				   'pattern' => 'articles',
-				   'controller' => 'ArticlesController'
-				),
-				array(
-				   'pattern' => 'articles/:article_id',
-				   'controller' => 'ArticleController'
-				),
-				array(
-				   'pattern' => 'test/:seg1/path/:seg2',
-				   'controller' => 'TestController'
-				),
-				array(
-				   'pattern' => 'content/:/\*',
-				   'controller' => 'ContentController'
-				),
-				array(
-				   'pattern' => 'content/*category/:article',
-				   'controller' => 'ArticleController'
-				),
-				array(
-					'pattern' => '/',
-					'controller' => 'DefaultController'
-				),
-				array(
-					'pattern' => 'default_option/:article_id',
+			[
+				[
+					'pattern'    => 'login',
+					'controller' => 'LoginController',
+				],
+				[
+					'pattern'    => 'logout',
+					'controller' => 'LogoutController',
+				],
+				[
+					'pattern'    => 'articles',
+					'controller' => 'ArticlesController',
+				],
+				[
+					'pattern'    => 'articles/:article_id',
 					'controller' => 'ArticleController',
-					'defaults' => [
-						'option' => 'content'
-					]
-				),
-				array(
-					'pattern' => 'overriden_option/:view/:id',
+				],
+				[
+					'pattern'    => 'test/:seg1/path/:seg2',
+					'controller' => 'TestController',
+				],
+				[
+					'pattern'    => 'content/:/\*',
+					'controller' => 'ContentController',
+				],
+				[
+					'pattern'    => 'content/*category/:article',
 					'controller' => 'ArticleController',
-					'defaults' => [
+				],
+				[
+					'pattern'    => '/',
+					'controller' => 'DefaultController',
+				],
+				[
+					'pattern'    => 'default_option/:article_id',
+					'controller' => 'ArticleController',
+					'defaults'   => [
 						'option' => 'content',
-						'view' => 'category'
-					]
-				),
-			)
+					],
+				],
+				[
+					'pattern'    => 'overriden_option/:view/:id',
+					'controller' => 'ArticleController',
+					'defaults'   => [
+						'option' => 'content',
+						'view'   => 'category',
+					],
+				],
+			]
 		);
 	}
 }
