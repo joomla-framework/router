@@ -60,7 +60,7 @@ class DebugRouterCommand extends AbstractCommand
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected function configure()
+	protected function configure(): void
 	{
 		$this->setDescription("Displays information about the application's routes");
 		$this->addOption('show-controllers', null, InputOption::VALUE_NONE, 'Show the controller for a route in the overview');
@@ -216,7 +216,7 @@ EOF
 	 * @since   __DEPLOY_VERSION__
 	 * @note    This method is based on \Symfony\Bundle\FrameworkBundle\Console\Descriptor\Descriptor::formatValue()
 	 */
-	private function formatValue($value)
+	private function formatValue($value): string
 	{
 		if (\is_object($value))
 		{

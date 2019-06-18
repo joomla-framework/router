@@ -70,7 +70,7 @@ class ResolvedRoute
 	/**
 	 * Retrieve the variables matched by the route
 	 *
-	 * @return  mixed
+	 * @return  array
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
@@ -82,7 +82,7 @@ class ResolvedRoute
 	/**
 	 * Retrieve the URI for this route
 	 *
-	 * @return  mixed
+	 * @return  string
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */

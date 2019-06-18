@@ -64,7 +64,7 @@ class Router implements \Serializable
 	 * @since   __DEPLOY_VERSION__
 	 * @throws  \UnexpectedValueException  If missing the `pattern` or `controller` keys from the map.
 	 */
-	public function addRoutes(array $routes)
+	public function addRoutes(array $routes): self
 	{
 		foreach ($routes as $route)
 		{
@@ -171,7 +171,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function get(string $pattern, $controller, array $rules = [], array $defaults = [])
+	public function get(string $pattern, $controller, array $rules = [], array $defaults = []): self
 	{
 		return $this->addRoute(new Route(['GET'], $pattern, $controller, $rules, $defaults));
 	}
@@ -188,7 +188,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function post(string $pattern, $controller, array $rules = [], array $defaults = [])
+	public function post(string $pattern, $controller, array $rules = [], array $defaults = []): self
 	{
 		return $this->addRoute(new Route(['POST'], $pattern, $controller, $rules, $defaults));
 	}
@@ -205,7 +205,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function put(string $pattern, $controller, array $rules = [], array $defaults = [])
+	public function put(string $pattern, $controller, array $rules = [], array $defaults = []): self
 	{
 		return $this->addRoute(new Route(['PUT'], $pattern, $controller, $rules, $defaults));
 	}
@@ -222,7 +222,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function delete(string $pattern, $controller, array $rules = [], array $defaults = [])
+	public function delete(string $pattern, $controller, array $rules = [], array $defaults = []): self
 	{
 		return $this->addRoute(new Route(['DELETE'], $pattern, $controller, $rules, $defaults));
 	}
@@ -239,7 +239,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function head(string $pattern, $controller, array $rules = [], array $defaults = [])
+	public function head(string $pattern, $controller, array $rules = [], array $defaults = []): self
 	{
 		return $this->addRoute(new Route(['HEAD'], $pattern, $controller, $rules, $defaults));
 	}
@@ -256,7 +256,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function options(string $pattern, $controller, array $rules = [], array $defaults = [])
+	public function options(string $pattern, $controller, array $rules = [], array $defaults = []): self
 	{
 		return $this->addRoute(new Route(['OPTIONS'], $pattern, $controller, $rules, $defaults));
 	}
@@ -273,7 +273,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function trace(string $pattern, $controller, array $rules = [], array $defaults = [])
+	public function trace(string $pattern, $controller, array $rules = [], array $defaults = []): self
 	{
 		return $this->addRoute(new Route(['TRACE'], $pattern, $controller, $rules, $defaults));
 	}
@@ -290,7 +290,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function patch(string $pattern, $controller, array $rules = [], array $defaults = [])
+	public function patch(string $pattern, $controller, array $rules = [], array $defaults = []): self
 	{
 		return $this->addRoute(new Route(['PATCH'], $pattern, $controller, $rules, $defaults));
 	}
@@ -307,7 +307,7 @@ class Router implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function all(string $pattern, $controller, array $rules = [], array $defaults = [])
+	public function all(string $pattern, $controller, array $rules = [], array $defaults = []): self
 	{
 		return $this->addRoute(new Route([], $pattern, $controller, $rules, $defaults));
 	}

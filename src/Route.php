@@ -100,7 +100,7 @@ class Route implements \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected function buildRegexAndVarList()
+	protected function buildRegexAndVarList(): void
 	{
 		// Sanitize and explode the pattern.
 		$pattern = explode('/', trim(parse_url($this->getPattern(), PHP_URL_PATH), ' /'));
