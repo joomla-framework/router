@@ -370,50 +370,70 @@ class Route implements \Serializable
 	}
 
 	/**
-	 * String representation of the Router object
+	 * Serialize the route.
 	 *
-	 * @return  string  The string representation of the object or null
+	 * @return  string  The serialized route.
 	 *
-	 * @link    http://php.net/manual/en/serializable.serialize.php
 	 * @since   __DEPLOY_VERSION__
 	 */
 	public function serialize()
 	{
-		$controller = $this->getController() instanceof \Closure ? new SerializableClosure($this->getController()) : $this->getController();
-
-		return serialize(
-			[
-				'controller'     => $controller,
-				'defaults'       => $this->getDefaults(),
-				'methods'        => $this->getMethods(),
-				'pattern'        => $this->getPattern(),
-				'regex'          => $this->getRegex(),
-				'routeVariables' => $this->getRouteVariables(),
-				'rules'          => $this->getRules(),
-			]
-		);
+		return serialize($this->__serialize());
 	}
 
 	/**
-	 * Constructs the object from a serialized string
+	 * Serialize the route.
 	 *
-	 * @param   string  $serialized  The string representation of the object.
+	 * @return  array  The data to be serialized
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function __serialize()
+	{
+		$controller = $this->getController() instanceof \Closure ? new SerializableClosure($this->getController()) : $this->getController();
+
+		return [
+			'controller'     => $controller,
+			'defaults'       => $this->getDefaults(),
+			'methods'        => $this->getMethods(),
+			'pattern'        => $this->getPattern(),
+			'regex'          => $this->getRegex(),
+			'routeVariables' => $this->getRouteVariables(),
+			'rules'          => $this->getRules(),
+		];
+	}
+
+	/**
+	 * Unserialize the route.
+	 *
+	 * @param   string  $serialized  The serialized route.
 	 *
 	 * @return  void
 	 *
-	 * @link    http://php.net/manual/en/serializable.unserialize.php
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.0
 	 */
 	public function unserialize($serialized)
 	{
-		list(
-			$this->controller,
-			$this->defaults,
-			$this->methods,
-			$this->pattern,
-			$this->regex,
-			$this->routeVariables,
-			$this->rules
-		) = unserialize($serialized);
+		$this->__unserialize(unserialize($serialized));
+	}
+
+	/**
+	 * Unserialize the route.
+	 *
+	 * @param   array  $data  The serialized route.
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function __unserialize(array $data)
+	{
+		$this->controller     = $data['controller'];
+		$this->defaults       = $data['defaults'];
+		$this->methods        = $data['methods'];
+		$this->pattern        = $data['pattern'];
+		$this->regex          = $data['regex'];
+		$this->routeVariables = $data['routeVariables'];
+		$this->rules          = $data['rules'];
 	}
 }

@@ -313,30 +313,56 @@ class Router implements \Serializable
 	}
 
 	/**
-	 * String representation of the Router object
+	 * Serialize the router.
 	 *
-	 * @return  string  The string representation of the object or null
+	 * @return  string  The serialized router.
 	 *
-	 * @link    http://php.net/manual/en/serializable.serialize.php
 	 * @since   __DEPLOY_VERSION__
 	 */
 	public function serialize()
 	{
-		return serialize($this->routes);
+		return serialize($this->__serialize());
 	}
 
 	/**
-	 * Constructs the object from a serialized string
+	 * Serialize the router.
 	 *
-	 * @param   string  $serialized  The string representation of the object.
+	 * @return  array  The data to be serialized
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function __serialize()
+	{
+		return [
+			'routes' => $this->routes,
+		];
+	}
+
+	/**
+	 * Unserialize the router.
+	 *
+	 * @param   string  $serialized  The serialized router.
 	 *
 	 * @return  void
 	 *
-	 * @link    http://php.net/manual/en/serializable.unserialize.php
 	 * @since   __DEPLOY_VERSION__
 	 */
 	public function unserialize($serialized)
 	{
-		$this->routes = unserialize($serialized);
+		$this->__unserialize(unserialize($serialized));
+	}
+
+	/**
+	 * Unserialize the router.
+	 *
+	 * @param   array  $data  The serialized router.
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function __unserialize(array $data)
+	{
+		$this->routes = $data['routes'];
 	}
 }
