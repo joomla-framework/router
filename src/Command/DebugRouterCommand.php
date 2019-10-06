@@ -9,7 +9,7 @@
 namespace Joomla\Router\Command;
 
 use Joomla\Console\Command\AbstractCommand;
-use Joomla\Router\Router;
+use Joomla\Router\RouterInterface;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -34,7 +34,7 @@ class DebugRouterCommand extends AbstractCommand
 	/**
 	 * The application router.
 	 *
-	 * @var    Router
+	 * @var    RouterInterface
 	 * @since  __DEPLOY_VERSION__
 	 */
 	private $router;
@@ -42,11 +42,11 @@ class DebugRouterCommand extends AbstractCommand
 	/**
 	 * Instantiate the command.
 	 *
-	 * @param   Router  $router  The application router.
+	 * @param   RouterInterface  $router  The application router.
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function __construct(Router $router)
+	public function __construct(RouterInterface $router)
 	{
 		$this->router = $router;
 
