@@ -9,35 +9,12 @@
 namespace Joomla\Router;
 
 /**
- * A path router.
+ * Interface defining a HTTP path router.
  *
- * @since  1.0
+ * @since  __DEPLOY_VERSION__
  */
-class Router implements RouterInterface, \Serializable
+interface RouterInterface
 {
-	/**
-	 * An array of Route objects defining the supported paths.
-	 *
-	 * @var    Route[]
-	 * @since  __DEPLOY_VERSION__
-	 */
-	protected $routes = [];
-
-	/**
-	 * Constructor.
-	 *
-	 * @param   Route[]|array[]  $routes  A list of route maps or Route objects to add to the router.
-	 *
-	 * @since   1.0
-	 */
-	public function __construct(array $routes = [])
-	{
-		if (!empty($routes))
-		{
-			$this->addRoutes($routes);
-		}
-	}
-
 	/**
 	 * Add a route to the router.
 	 *
@@ -47,12 +24,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function addRoute(Route $route): RouterInterface
-	{
-		$this->routes[] = $route;
-
-		return $this;
-	}
+	public function addRoute(Route $route): RouterInterface;
 
 	/**
 	 * Add an array of route maps or objects to the router.
@@ -64,39 +36,7 @@ class Router implements RouterInterface, \Serializable
 	 * @since   __DEPLOY_VERSION__
 	 * @throws  \UnexpectedValueException  If missing the `pattern` or `controller` keys from the mapping array.
 	 */
-	public function addRoutes(array $routes): RouterInterface
-	{
-		foreach ($routes as $route)
-		{
-			if ($route instanceof Route)
-			{
-				$this->addRoute($route);
-			}
-			else
-			{
-				// Ensure a `pattern` key exists
-				if (! array_key_exists('pattern', $route))
-				{
-					throw new \UnexpectedValueException('Route map must contain a pattern variable.');
-				}
-
-				// Ensure a `controller` key exists
-				if (! array_key_exists('controller', $route))
-				{
-					throw new \UnexpectedValueException('Route map must contain a controller variable.');
-				}
-
-				// If defaults, rules have been specified, add them as well.
-				$defaults = $route['defaults'] ?? [];
-				$rules    = $route['rules'] ?? [];
-				$methods  = $route['methods'] ?? ['GET'];
-
-				$this->addRoute(new Route($methods, $route['pattern'], $route['controller'], $rules, $defaults));
-			}
-		}
-
-		return $this;
-	}
+	public function addRoutes(array $routes): RouterInterface;
 
 	/**
 	 * Get the routes registered with this router.
@@ -105,10 +45,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function getRoutes(): array
-	{
-		return $this->routes;
-	}
+	public function getRoutes(): array;
 
 	/**
 	 * Parse the given route and return the information about the route, including the controller assigned to the route.
@@ -118,46 +55,11 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  ResolvedRoute
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 * @throws  Exception\MethodNotAllowedException if the route was found but does not support the request method
 	 * @throws  Exception\RouteNotFoundException if the route was not found
 	 */
-	public function parseRoute($route, $method = 'GET')
-	{
-		$method = strtoupper($method);
-
-		// Get the path from the route and remove and leading or trailing slash.
-		$route = trim(parse_url($route, PHP_URL_PATH), ' /');
-
-		// Iterate through all of the known routes looking for a match.
-		foreach ($this->routes as $rule)
-		{
-			if (preg_match($rule->getRegex(), $route, $matches))
-			{
-				// Check if the route supports this method
-				if (!empty($rule->getMethods()) && !\in_array($method, $rule->getMethods()))
-				{
-					throw new Exception\MethodNotAllowedException(
-						array_unique($rule->getMethods()),
-						sprintf('Route `%s` does not support `%s` requests.', $route, strtoupper($method)),
-						405
-					);
-				}
-
-				// If we have gotten this far then we have a positive match.
-				$vars = $rule->getDefaults();
-
-				foreach ($rule->getRouteVariables() as $i => $var)
-				{
-					$vars[$var] = $matches[$i + 1];
-				}
-
-				return new ResolvedRoute($rule->getController(), $vars, $route);
-			}
-		}
-
-		throw new Exception\RouteNotFoundException(sprintf('Unable to handle request for route `%s`.', $route), 404);
-	}
+	public function parseRoute($route, $method = 'GET');
 
 	/**
 	 * Add a GET route to the router.
@@ -171,10 +73,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function get(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
-	{
-		return $this->addRoute(new Route(['GET'], $pattern, $controller, $rules, $defaults));
-	}
+	public function get(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
 	/**
 	 * Add a POST route to the router.
@@ -188,10 +87,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function post(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
-	{
-		return $this->addRoute(new Route(['POST'], $pattern, $controller, $rules, $defaults));
-	}
+	public function post(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
 	/**
 	 * Add a PUT route to the router.
@@ -205,10 +101,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function put(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
-	{
-		return $this->addRoute(new Route(['PUT'], $pattern, $controller, $rules, $defaults));
-	}
+	public function put(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
 	/**
 	 * Add a DELETE route to the router.
@@ -222,10 +115,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function delete(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
-	{
-		return $this->addRoute(new Route(['DELETE'], $pattern, $controller, $rules, $defaults));
-	}
+	public function delete(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
 	/**
 	 * Add a HEAD route to the router.
@@ -239,10 +129,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function head(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
-	{
-		return $this->addRoute(new Route(['HEAD'], $pattern, $controller, $rules, $defaults));
-	}
+	public function head(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
 	/**
 	 * Add a OPTIONS route to the router.
@@ -256,10 +143,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function options(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
-	{
-		return $this->addRoute(new Route(['OPTIONS'], $pattern, $controller, $rules, $defaults));
-	}
+	public function options(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
 	/**
 	 * Add a TRACE route to the router.
@@ -273,10 +157,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function trace(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
-	{
-		return $this->addRoute(new Route(['TRACE'], $pattern, $controller, $rules, $defaults));
-	}
+	public function trace(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
 	/**
 	 * Add a PATCH route to the router.
@@ -290,10 +171,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function patch(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
-	{
-		return $this->addRoute(new Route(['PATCH'], $pattern, $controller, $rules, $defaults));
-	}
+	public function patch(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
 	/**
 	 * Add a route to the router that accepts all request methods.
@@ -307,62 +185,5 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function all(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
-	{
-		return $this->addRoute(new Route([], $pattern, $controller, $rules, $defaults));
-	}
-
-	/**
-	 * Serialize the router.
-	 *
-	 * @return  string  The serialized router.
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	public function serialize()
-	{
-		return serialize($this->__serialize());
-	}
-
-	/**
-	 * Serialize the router.
-	 *
-	 * @return  array  The data to be serialized
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	public function __serialize()
-	{
-		return [
-			'routes' => $this->routes,
-		];
-	}
-
-	/**
-	 * Unserialize the router.
-	 *
-	 * @param   string  $serialized  The serialized router.
-	 *
-	 * @return  void
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	public function unserialize($serialized)
-	{
-		$this->__unserialize(unserialize($serialized));
-	}
-
-	/**
-	 * Unserialize the router.
-	 *
-	 * @param   array  $data  The serialized router.
-	 *
-	 * @return  void
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	public function __unserialize(array $data)
-	{
-		$this->routes = $data['routes'];
-	}
+	public function all(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 }
