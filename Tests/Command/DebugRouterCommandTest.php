@@ -19,6 +19,13 @@ use Symfony\Component\Console\Output\BufferedOutput;
  */
 class DebugRouterCommandTest extends TestCase
 {
+	/**
+	 * @testdox  The router's routes can be listed when the router is empty
+	 *
+	 * @covers   Joomla\Router\Command\DebugRouterCommand
+	 * @uses     Joomla\Router\Route
+	 * @uses     Joomla\Router\Router
+	 */
 	public function testTheCommandIsExecutedWithAnEmptyRouter()
 	{
 		$router = new Router;
@@ -41,6 +48,13 @@ class DebugRouterCommandTest extends TestCase
 		$this->assertStringContainsString('The router has no routes.', $screenOutput);
 	}
 
+	/**
+	 * @testdox  The router's routes can be listed when the router has routes
+	 *
+	 * @covers   Joomla\Router\Command\DebugRouterCommand
+	 * @uses     Joomla\Router\Route
+	 * @uses     Joomla\Router\Router
+	 */
 	public function testTheCommandIsExecutedWithAConfiguredRouter()
 	{
 		$router = new Router;
@@ -69,6 +83,13 @@ class DebugRouterCommandTest extends TestCase
 		$this->assertStringNotContainsString('UserController', $screenOutput);
 	}
 
+	/**
+	 * @testdox  The router's routes can be listed when the router has routes and the controllers are displayed
+	 *
+	 * @covers   Joomla\Router\Command\DebugRouterCommand
+	 * @uses     Joomla\Router\Route
+	 * @uses     Joomla\Router\Router
+	 */
 	public function testTheCommandIsExecutedWithAConfiguredRouterAndControllersAreDisplayed()
 	{
 		$router = new Router;

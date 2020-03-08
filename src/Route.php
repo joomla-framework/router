@@ -8,7 +8,7 @@
 
 namespace Joomla\Router;
 
-use Jeremeamia\SuperClosure\SerializableClosure;
+use SuperClosure\SerializableClosure;
 
 /**
  * An object representing a route definition.
@@ -390,7 +390,22 @@ class Route implements \Serializable
 	 */
 	public function __serialize()
 	{
-		$controller = $this->getController() instanceof \Closure ? new SerializableClosure($this->getController()) : $this->getController();
+		$controller = $this->getController();
+
+		if ($controller instanceof \Closure)
+		{
+			if (!class_exists(SerializableClosure::class))
+			{
+				throw new \RuntimeException(
+					\sprintf(
+						'Cannot serialize the route for pattern "%s" because the controller is a Closure. Install the "jeremeamia/superclosure" package to serialize Closures.',
+						$this->getPattern()
+					)
+				);
+			}
+
+			$controller = new SerializableClosure($controller);
+		}
 
 		return [
 			'controller'     => $controller,
