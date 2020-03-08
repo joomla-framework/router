@@ -9,14 +9,14 @@
         "php": "^7.2.5"
     },
     "require-dev": {
-        "jeremeamia/superclosure": "~1.0",
-        "joomla/coding-standards": "~2.0@alpha",
-        "joomla/console": "~2.0",
-        "phpunit/phpunit": "~8.2"
+        "jeremeamia/superclosure": "^1.0|^2.0",
+        "joomla/coding-standards": "^2.0@alpha",
+        "joomla/console": "^2.0",
+        "phpunit/phpunit": "^8.5|^9.0"
     },
     "suggest": {
-        "jeremeamia/superclosure": "If you use Closure controllers, and want to be able to cache / serialize the router, please install jeremeamia/superclosure:~1.0",
-        "joomla/console": "If you want to use the DebugRouterCommand class, please install joomla/console:~2.0"
+        "jeremeamia/superclosure": "If you use Closure based controllers and want to be able to serialize the router, please install jeremeamia/superclosure",
+        "joomla/console": "If you want to use the DebugRouterCommand class, please install joomla/console"
     },
     "autoload": {
         "psr-4": {
