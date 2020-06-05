@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Router Package
  *
- * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2020 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -11,7 +11,7 @@ namespace Joomla\Router;
 /**
  * An object representing a resolved route.
  *
- * @since  __DEPLOY_VERSION__
+ * @since  2.0.0-beta
  */
 class ResolvedRoute
 {
@@ -19,7 +19,7 @@ class ResolvedRoute
 	 * The controller which handles this route
 	 *
 	 * @var    mixed
-	 * @since  __DEPLOY_VERSION__
+	 * @since  2.0.0-beta
 	 */
 	private $controller;
 
@@ -27,7 +27,7 @@ class ResolvedRoute
 	 * The variables matched by the route
 	 *
 	 * @var    array
-	 * @since  __DEPLOY_VERSION__
+	 * @since  2.0.0-beta
 	 */
 	private $routeVariables;
 
@@ -35,7 +35,7 @@ class ResolvedRoute
 	 * The URI for this route
 	 *
 	 * @var    string
-	 * @since  __DEPLOY_VERSION__
+	 * @since  2.0.0-beta
 	 */
 	private $uri;
 
@@ -46,7 +46,7 @@ class ResolvedRoute
 	 * @param   array   $routeVariables  The variables matched by the route
 	 * @param   string  $uri             The URI for this route
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function __construct($controller, array $routeVariables, string $uri)
 	{
@@ -60,7 +60,7 @@ class ResolvedRoute
 	 *
 	 * @return  mixed
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getController()
 	{
@@ -72,7 +72,7 @@ class ResolvedRoute
 	 *
 	 * @return  array
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getRouteVariables(): array
 	{
@@ -84,7 +84,7 @@ class ResolvedRoute
 	 *
 	 * @return  string
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getUri(): string
 	{

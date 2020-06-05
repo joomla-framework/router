@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Router Package
  *
- * @copyright  Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2020 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -11,7 +11,7 @@ namespace Joomla\Router\Exception;
 /**
  * Exception defining a method not allowed error.
  *
- * @since  __DEPLOY_VERSION__
+ * @since  2.0.0-beta
  */
 class MethodNotAllowedException extends \RuntimeException
 {
@@ -19,7 +19,7 @@ class MethodNotAllowedException extends \RuntimeException
 	 * Allowed methods for the given route
 	 *
 	 * @var    string[]
-	 * @since  __DEPLOY_VERSION__
+	 * @since  2.0.0-beta
 	 */
 	protected $allowedMethods = [];
 
@@ -43,7 +43,7 @@ class MethodNotAllowedException extends \RuntimeException
 	 *
 	 * @return  array
 	 *
-	 * @since  __DEPLOY_VERSION__
+	 * @since  2.0.0-beta
 	 */
 	public function getAllowedMethods(): array
 	{

@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Router Package
  *
- * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2020 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -11,7 +11,7 @@ namespace Joomla\Router;
 /**
  * Interface defining a HTTP path router.
  *
- * @since  __DEPLOY_VERSION__
+ * @since  2.0.0-beta
  */
 interface RouterInterface
 {
@@ -22,7 +22,7 @@ interface RouterInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function addRoute(Route $route): RouterInterface;
 
@@ -33,7 +33,7 @@ interface RouterInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 * @throws  \UnexpectedValueException  If missing the `pattern` or `controller` keys from the mapping array.
 	 */
 	public function addRoutes(array $routes): RouterInterface;
@@ -43,7 +43,7 @@ interface RouterInterface
 	 *
 	 * @return  Route[]
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getRoutes(): array;
 
@@ -55,7 +55,7 @@ interface RouterInterface
 	 *
 	 * @return  ResolvedRoute
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 * @throws  Exception\MethodNotAllowedException if the route was found but does not support the request method
 	 * @throws  Exception\RouteNotFoundException if the route was not found
 	 */
@@ -71,7 +71,7 @@ interface RouterInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function get(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
@@ -85,7 +85,7 @@ interface RouterInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function post(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
@@ -99,7 +99,7 @@ interface RouterInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function put(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
@@ -113,7 +113,7 @@ interface RouterInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function delete(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
@@ -127,7 +127,7 @@ interface RouterInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function head(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
@@ -141,7 +141,7 @@ interface RouterInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function options(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
@@ -155,7 +155,7 @@ interface RouterInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function trace(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
@@ -169,7 +169,7 @@ interface RouterInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function patch(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 
@@ -183,7 +183,7 @@ interface RouterInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function all(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface;
 }
