@@ -11,7 +11,7 @@ namespace Joomla\Router;
 /**
  * An object representing a resolved route.
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 class ResolvedRoute
 {
@@ -19,7 +19,7 @@ class ResolvedRoute
 	 * The controller which handles this route
 	 *
 	 * @var    mixed
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $controller;
 
@@ -27,7 +27,7 @@ class ResolvedRoute
 	 * The variables matched by the route
 	 *
 	 * @var    array
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $routeVariables;
 
@@ -35,7 +35,7 @@ class ResolvedRoute
 	 * The URI for this route
 	 *
 	 * @var    string
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $uri;
 
@@ -46,7 +46,7 @@ class ResolvedRoute
 	 * @param   array   $routeVariables  The variables matched by the route
 	 * @param   string  $uri             The URI for this route
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function __construct($controller, array $routeVariables, string $uri)
 	{
@@ -60,7 +60,7 @@ class ResolvedRoute
 	 *
 	 * @return  mixed
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getController()
 	{
@@ -72,7 +72,7 @@ class ResolvedRoute
 	 *
 	 * @return  array
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getRouteVariables(): array
 	{
@@ -84,7 +84,7 @@ class ResolvedRoute
 	 *
 	 * @return  string
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getUri(): string
 	{

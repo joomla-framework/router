@@ -19,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * Command listing information about the application's router.
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 class DebugRouterCommand extends AbstractCommand
 {
@@ -27,7 +27,7 @@ class DebugRouterCommand extends AbstractCommand
 	 * The default command name
 	 *
 	 * @var    string
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	protected static $defaultName = 'debug:router';
 
@@ -35,7 +35,7 @@ class DebugRouterCommand extends AbstractCommand
 	 * The application router.
 	 *
 	 * @var    RouterInterface
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $router;
 
@@ -44,7 +44,7 @@ class DebugRouterCommand extends AbstractCommand
 	 *
 	 * @param   RouterInterface  $router  The application router.
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function __construct(RouterInterface $router)
 	{
@@ -58,7 +58,7 @@ class DebugRouterCommand extends AbstractCommand
 	 *
 	 * @return  void
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	protected function configure(): void
 	{
@@ -84,7 +84,7 @@ EOF
 	 *
 	 * @return  integer  The command exit code
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	protected function doExecute(InputInterface $input, OutputInterface $output): int
 	{
@@ -160,7 +160,7 @@ EOF
 	 *
 	 * @return  string
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 * @throws  \ReflectionException
 	 * @note    This method is based on \Symfony\Bundle\FrameworkBundle\Console\Descriptor\TextDescriptor::formatCallable()
 	 */
@@ -213,7 +213,7 @@ EOF
 	 *
 	 * @return  string
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 * @note    This method is based on \Symfony\Bundle\FrameworkBundle\Console\Descriptor\Descriptor::formatValue()
 	 */
 	private function formatValue($value): string

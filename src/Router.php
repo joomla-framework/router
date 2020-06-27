@@ -19,7 +19,7 @@ class Router implements RouterInterface, \Serializable
 	 * An array of Route objects defining the supported paths.
 	 *
 	 * @var    Route[]
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	protected $routes = [];
 
@@ -45,7 +45,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function addRoute(Route $route): RouterInterface
 	{
@@ -61,7 +61,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 * @throws  \UnexpectedValueException  If missing the `pattern` or `controller` keys from the mapping array.
 	 */
 	public function addRoutes(array $routes): RouterInterface
@@ -103,7 +103,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  Route[]
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getRoutes(): array
 	{
@@ -169,7 +169,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function get(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
 	{
@@ -186,7 +186,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function post(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
 	{
@@ -203,7 +203,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function put(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
 	{
@@ -220,7 +220,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function delete(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
 	{
@@ -237,7 +237,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function head(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
 	{
@@ -254,7 +254,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function options(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
 	{
@@ -271,7 +271,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function trace(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
 	{
@@ -288,7 +288,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function patch(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
 	{
@@ -305,7 +305,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function all(string $pattern, $controller, array $rules = [], array $defaults = []): RouterInterface
 	{
@@ -317,7 +317,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  string  The serialized router.
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function serialize()
 	{
@@ -329,7 +329,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  array  The data to be serialized
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function __serialize()
 	{
@@ -345,7 +345,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  void
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function unserialize($serialized)
 	{
@@ -359,7 +359,7 @@ class Router implements RouterInterface, \Serializable
 	 *
 	 * @return  void
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function __unserialize(array $data)
 	{

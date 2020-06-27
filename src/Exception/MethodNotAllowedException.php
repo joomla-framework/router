@@ -11,7 +11,7 @@ namespace Joomla\Router\Exception;
 /**
  * Exception defining a method not allowed error.
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 class MethodNotAllowedException extends \RuntimeException
 {
@@ -19,7 +19,7 @@ class MethodNotAllowedException extends \RuntimeException
 	 * Allowed methods for the given route
 	 *
 	 * @var    string[]
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	protected $allowedMethods = [];
 
@@ -43,7 +43,7 @@ class MethodNotAllowedException extends \RuntimeException
 	 *
 	 * @return  array
 	 *
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	public function getAllowedMethods(): array
 	{

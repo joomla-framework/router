@@ -11,7 +11,7 @@ namespace Joomla\Router\Exception;
 /**
  * Exception defining a route not found error.
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 class RouteNotFoundException extends \InvalidArgumentException
 {

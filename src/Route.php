@@ -13,7 +13,7 @@ use SuperClosure\SerializableClosure;
 /**
  * An object representing a route definition.
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 class Route implements \Serializable
 {
@@ -21,7 +21,7 @@ class Route implements \Serializable
 	 * The controller which handles this route
 	 *
 	 * @var    mixed
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $controller;
 
@@ -29,7 +29,7 @@ class Route implements \Serializable
 	 * The default variables defined by the route
 	 *
 	 * @var    array
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $defaults = [];
 
@@ -37,7 +37,7 @@ class Route implements \Serializable
 	 * The HTTP methods this route supports
 	 *
 	 * @var    string[]
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $methods;
 
@@ -45,7 +45,7 @@ class Route implements \Serializable
 	 * The route pattern to use for matching
 	 *
 	 * @var    string
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $pattern;
 
@@ -53,7 +53,7 @@ class Route implements \Serializable
 	 * The path regex this route processes
 	 *
 	 * @var    string
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $regex;
 
@@ -61,7 +61,7 @@ class Route implements \Serializable
 	 * The variables defined by the route
 	 *
 	 * @var    array
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $routeVariables = [];
 
@@ -69,7 +69,7 @@ class Route implements \Serializable
 	 * An array of regex rules keyed using the route variables
 	 *
 	 * @var    array
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $rules = [];
 
@@ -82,7 +82,7 @@ class Route implements \Serializable
 	 * @param   array   $rules       An array of regex rules keyed using the route variables
 	 * @param   array   $defaults    The default variables defined by the route
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function __construct(array $methods, string $pattern, $controller, array $rules = [], array $defaults = [])
 	{
@@ -98,7 +98,7 @@ class Route implements \Serializable
 	 *
 	 * @return  void
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	protected function buildRegexAndVarList(): void
 	{
@@ -165,7 +165,7 @@ class Route implements \Serializable
 	 *
 	 * @return  mixed
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getController()
 	{
@@ -177,7 +177,7 @@ class Route implements \Serializable
 	 *
 	 * @return  array
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getDefaults(): array
 	{
@@ -189,7 +189,7 @@ class Route implements \Serializable
 	 *
 	 * @return  string[]
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getMethods(): array
 	{
@@ -201,7 +201,7 @@ class Route implements \Serializable
 	 *
 	 * @return  string
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getPattern(): string
 	{
@@ -213,7 +213,7 @@ class Route implements \Serializable
 	 *
 	 * @return  string
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getRegex(): string
 	{
@@ -230,7 +230,7 @@ class Route implements \Serializable
 	 *
 	 * @return  array
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getRouteVariables(): array
 	{
@@ -247,7 +247,7 @@ class Route implements \Serializable
 	 *
 	 * @return  array
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getRules(): array
 	{
@@ -261,7 +261,7 @@ class Route implements \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setController($controller): self
 	{
@@ -277,7 +277,7 @@ class Route implements \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setDefaults(array $defaults): self
 	{
@@ -293,7 +293,7 @@ class Route implements \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setMethods(array $methods): self
 	{
@@ -309,7 +309,7 @@ class Route implements \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setPattern(string $pattern): self
 	{
@@ -328,7 +328,7 @@ class Route implements \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setRegex(string $regex): self
 	{
@@ -344,7 +344,7 @@ class Route implements \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setRouteVariables(array $routeVariables): self
 	{
@@ -360,7 +360,7 @@ class Route implements \Serializable
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setRules(array $rules): self
 	{
@@ -374,7 +374,7 @@ class Route implements \Serializable
 	 *
 	 * @return  string  The serialized route.
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function serialize()
 	{
@@ -386,7 +386,7 @@ class Route implements \Serializable
 	 *
 	 * @return  array  The data to be serialized
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function __serialize()
 	{
@@ -439,7 +439,7 @@ class Route implements \Serializable
 	 *
 	 * @return  void
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function __unserialize(array $data)
 	{
