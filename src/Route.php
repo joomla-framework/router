@@ -398,7 +398,8 @@ class Route implements \Serializable
 			{
 				throw new \RuntimeException(
 					\sprintf(
-						'Cannot serialize the route for pattern "%s" because the controller is a Closure. Install the "jeremeamia/superclosure" package to serialize Closures.',
+						'Cannot serialize the route for pattern "%s" because the controller is a Closure. '
+						. 'Install the "jeremeamia/superclosure" package to serialize Closures.',
 						$this->getPattern()
 					)
 				);

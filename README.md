@@ -1,4 +1,4 @@
-# The Router Package [![Build Status](https://travis-ci.org/joomla-framework/router.png?branch=master)](https://travis-ci.org/joomla-framework/router) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/joomla-framework/router/badges/quality-score.png?b=2.0-dev)](https://scrutinizer-ci.com/g/joomla-framework/router/?branch=2.0-dev)
+# The Router Package [![Build Status](https://ci.joomla.org/api/badges/joomla-framework/router/status.svg?ref=refs/heads/2.0-dev)](https://ci.joomla.org/joomla-framework/router)
 
 [![Latest Stable Version](https://poser.pugx.org/joomla/router/v/stable)](https://packagist.org/packages/joomla/router)
 [![Total Downloads](https://poser.pugx.org/joomla/router/downloads)](https://packagist.org/packages/joomla/router)
