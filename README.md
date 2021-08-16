@@ -16,5 +16,5 @@ The Router package is used to register an application's routes and to route the 
 To install the package, you can simply run the following from the command line:
            
 ```sh
-composer require joomla/router
+composer require joomla/router "~2.0"
 ```
