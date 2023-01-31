@@ -10,9 +10,9 @@
     },
     "require-dev": {
         "jeremeamia/superclosure": "^2.4",
-        "joomla/coding-standards": "^3.0@dev",
         "joomla/console": "^2.0",
-        "phpunit/phpunit": "^8.5|^9.0"
+        "phpunit/phpunit": "^8.5|^9.0",
+        "squizlabs/php_codesniffer": "~3.7.1"
     },
     "conflict": {
         "jeremeamia/superclosure": "<2.4"
