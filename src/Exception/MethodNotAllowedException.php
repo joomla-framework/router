@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Part of the Joomla Framework Router Package
  *
@@ -15,38 +16,38 @@ namespace Joomla\Router\Exception;
  */
 class MethodNotAllowedException extends \RuntimeException
 {
-	/**
-	 * Allowed methods for the given route
-	 *
-	 * @var    string[]
-	 * @since  2.0.0
-	 */
-	protected $allowedMethods = [];
+    /**
+     * Allowed methods for the given route
+     *
+     * @var    string[]
+     * @since  2.0.0
+     */
+    protected $allowedMethods = [];
 
-	/**
-	 * Constructor.
-	 *
-	 * @param   array       $allowedMethods  The allowed methods for the route.
-	 * @param   null        $message         The Exception message to throw.
-	 * @param   integer     $code            The Exception code.
-	 * @param   \Exception  $previous        The previous throwable used for the exception chaining.
-	 */
-	public function __construct(array $allowedMethods, $message = null, $code = 405, \Exception $previous = null)
-	{
-		$this->allowedMethods = array_map('strtoupper', $allowedMethods);
+    /**
+     * Constructor.
+     *
+     * @param   array       $allowedMethods  The allowed methods for the route.
+     * @param   null        $message         The Exception message to throw.
+     * @param   integer     $code            The Exception code.
+     * @param   \Exception  $previous        The previous throwable used for the exception chaining.
+     */
+    public function __construct(array $allowedMethods, $message = null, $code = 405, \Exception $previous = null)
+    {
+        $this->allowedMethods = array_map('strtoupper', $allowedMethods);
 
-		parent::__construct($message, $code, $previous);
-	}
+        parent::__construct($message, $code, $previous);
+    }
 
-	/**
-	 * Gets the allowed HTTP methods.
-	 *
-	 * @return  array
-	 *
-	 * @since  2.0.0
-	 */
-	public function getAllowedMethods(): array
-	{
-		return $this->allowedMethods;
-	}
+    /**
+     * Gets the allowed HTTP methods.
+     *
+     * @return  array
+     *
+     * @since  2.0.0
+     */
+    public function getAllowedMethods(): array
+    {
+        return $this->allowedMethods;
+    }
 }
