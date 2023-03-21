@@ -6,13 +6,15 @@
     "homepage": "https://github.com/joomla-framework/router",
     "license": "GPL-2.0-or-later",
     "require": {
-        "php": "~8.1.0"
+        "php": "^8.1.0"
     },
     "require-dev": {
         "jeremeamia/superclosure": "^2.4",
         "joomla/console": "3.0.x-dev",
         "phpunit/phpunit": "^9.5.28",
-        "squizlabs/php_codesniffer": "~3.7.1"
+        "squizlabs/php_codesniffer": "^3.7.2",
+        "phpstan/phpstan": "^1.10.7",
+        "phan/phan": "^5.4.2"
     },
     "conflict": {
         "jeremeamia/superclosure": "<2.4"
@@ -35,7 +37,7 @@
     "extra": {
         "branch-alias": {
             "dev-2.0-dev": "2.0-dev",
-            "dev-3.x-dev": "3.0-dev"
+            "dev-3.x-dev": "3.x-dev"
         }
     }
 }
