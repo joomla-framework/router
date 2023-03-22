@@ -27,10 +27,10 @@ class MethodNotAllowedException extends \RuntimeException
     /**
      * Constructor.
      *
-     * @param   array       $allowedMethods  The allowed methods for the route.
-     * @param   null        $message         The Exception message to throw.
-     * @param   integer     $code            The Exception code.
-     * @param   \Exception  $previous        The previous throwable used for the exception chaining.
+     * @param   array        $allowedMethods  The allowed methods for the route.
+     * @param   null         $message         The Exception message to throw.
+     * @param   integer      $code            The Exception code.
+     * @param   ?\Exception  $previous        The previous throwable used for the exception chaining.
      */
     public function __construct(array $allowedMethods, $message = null, $code = 405, \Exception $previous = null)
     {
