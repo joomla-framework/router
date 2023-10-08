@@ -10,7 +10,7 @@
     },
     "require-dev": {
         "jeremeamia/superclosure": "^2.4",
-        "joomla/console": "3.0.x-dev",
+        "joomla/console": "^3.0",
         "phpunit/phpunit": "^9.5.28",
         "squizlabs/php_codesniffer": "^3.7.2",
         "phpstan/phpstan": "^1.10.7",
