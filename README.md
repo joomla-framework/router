@@ -1,4 +1,4 @@
-# The Router Package [![Build Status](https://ci.joomla.org/api/badges/joomla-framework/router/status.svg?ref=refs/heads/3.x-dev)](https://ci.joomla.org/joomla-framework/router)
+# The Router Package [![Build Status](https://github.com/joomla-framework/router/actions/workflows/ci.yml/badge.svg?branch=3.x-dev)](https://github.com/joomla-framework/router)
 
 [![Latest Stable Version](https://poser.pugx.org/joomla/router/v/stable)](https://packagist.org/packages/joomla/router)
 [![Total Downloads](https://poser.pugx.org/joomla/router/downloads)](https://packagist.org/packages/joomla/router)
@@ -14,7 +14,7 @@ The Router package is used to register an application's routes and to route the 
 ## Installation
 
 To install the package, you can simply run the following from the command line:
-           
+
 ```sh
 composer require joomla/router "~3.0"
 ```
