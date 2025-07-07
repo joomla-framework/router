@@ -9,12 +9,12 @@ The Router package is used to register an application's routes and to route the 
 
 ## Requirements
 
-* PHP 8.1 or later
+* PHP 8.3 or later
 
 ## Installation
 
 To install the package, you can simply run the following from the command line:
 
 ```sh
-composer require joomla/router "~3.0"
+composer require joomla/router "~4.0"
 ```
