@@ -11,10 +11,11 @@ use Joomla\Router\Exception\MethodNotAllowedException;
 use Joomla\Router\Exception\RouteNotFoundException;
 use Joomla\Router\Route;
 use Joomla\Router\Router;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests for the Joomla\Router\Router class.
+ * Tests for the \Joomla\Router\Router class.
  */
 class RouterTest extends TestCase
 {
@@ -38,8 +39,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure the Router is instantiated correctly with no injected routes.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function test__construct()
     {
@@ -52,8 +53,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure the Router is instantiated correctly with injected routes.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function test__constructNotEmpty()
     {
@@ -88,8 +89,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure a route is added to the Router.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function testAddRoute()
     {
@@ -112,8 +113,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure a route is added to the Router.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function testAddRouteWithDefaults()
     {
@@ -136,8 +137,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure a GET route is added to the Router.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function testGet()
     {
@@ -151,8 +152,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure a POST route is added to the Router.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function testPost()
     {
@@ -166,8 +167,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure a PUT route is added to the Router.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function testPut()
     {
@@ -181,8 +182,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure a DELETE route is added to the Router.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function testDelete()
     {
@@ -196,8 +197,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure a HEAD route is added to the Router.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function testHead()
     {
@@ -211,8 +212,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure a OPTIONS route is added to the Router.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function testOptions()
     {
@@ -226,8 +227,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure a TRACE route is added to the Router.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function testTrace()
     {
@@ -241,8 +242,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure a PATCH route is added to the Router.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function testPatch()
     {
@@ -256,8 +257,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure a route supporting all methods is added to the Router.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function testAll()
     {
@@ -271,8 +272,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure several routes are added to the Router.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function testAddRoutes()
     {
@@ -320,12 +321,11 @@ class RouterTest extends TestCase
      * @param    array    $i  The expected return data.
      * @param    boolean  $m  True if routes should be set up.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\ResolvedRoute
-     * @uses     Joomla\Router\Route
-     *
-     * @dataProvider  seedTestParseRoute
+     * @covers   Router
+     * @uses     \Joomla\Router\ResolvedRoute
+     * @uses     Route
      */
+    #[DataProvider('seedTestParseRoute')]
     public function testParseRoute($r, $e, $i, $m)
     {
         if ($m) {
@@ -348,9 +348,9 @@ class RouterTest extends TestCase
     /**
      * @testdox  Ensure the Router handles a method not allowed error correctly.
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Exception\MethodNotAllowedException
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     \Joomla\Router\Exception\MethodNotAllowedException
+     * @uses     Route
      */
     public function testParseRouteWithMethodNotAllowedError()
     {
@@ -366,8 +366,8 @@ class RouterTest extends TestCase
     /**
      * @testdox  The router can be serialized
      *
-     * @covers   Joomla\Router\Router
-     * @uses     Joomla\Router\Route
+     * @covers   Router
+     * @uses     Route
      */
     public function testSerialization()
     {
@@ -382,57 +382,59 @@ class RouterTest extends TestCase
     /**
      * Provides test data for the testParseRoute method.
      *
-     * @return  \Generator
+     * @return  array
      */
-    public function seedTestParseRoute(): \Generator
+    public static function seedTestParseRoute(): array
     {
-        // Route Pattern, Throws Exception, Return Data, MapSetup
-        yield ['', true, [], false];
-        yield ['articles/4', true, [], false];
-        yield ['', false, ['controller' => 'DefaultController', 'vars' => []], true];
-        yield ['login', false, ['controller' => 'LoginController', 'vars' => []], true];
-        yield ['articles', false, ['controller' => 'ArticlesController', 'vars' => []], true];
-        yield ['articles/4', false, ['controller' => 'ArticleController', 'vars' => ['article_id' => 4]], true];
-        yield ['articles/4/crap', true, [], true];
-        yield ['test', true, [], true];
-        yield ['test/foo', true, [], true];
-        yield ['test/foo/path', true, [], true];
-        yield ['test/foo/path/bar', false, ['controller' => 'TestController', 'vars' => ['seg1' => 'foo', 'seg2' => 'bar']], true];
-        yield ['content/article-1/*', false, ['controller' => 'ContentController', 'vars' => []], true];
+        return [
+            // Route Pattern, Throws Exception, Return Data, MapSetup
+            ['', true, [], false],
+            ['articles/4', true, [], false],
+            ['', false, ['controller' => 'DefaultController', 'vars' => []], true],
+            ['login', false, ['controller' => 'LoginController', 'vars' => []], true],
+            ['articles', false, ['controller' => 'ArticlesController', 'vars' => []], true],
+            ['articles/4', false, ['controller' => 'ArticleController', 'vars' => ['article_id' => 4]], true],
+            ['articles/4/crap', true, [], true],
+            ['test', true, [], true],
+            ['test/foo', true, [], true],
+            ['test/foo/path', true, [], true],
+            ['test/foo/path/bar', false, ['controller' => 'TestController', 'vars' => ['seg1' => 'foo', 'seg2' => 'bar']], true],
+            ['content/article-1/*', false, ['controller' => 'ContentController', 'vars' => []], true],
 
-        yield [
-            'content/cat-1/article-1',
-            false,
-            ['controller' => 'ArticleController', 'vars' => ['category' => 'cat-1', 'article' => 'article-1']],
-            true,
-        ];
+            [
+                'content/cat-1/article-1',
+                false,
+                ['controller' => 'ArticleController', 'vars' => ['category' => 'cat-1', 'article' => 'article-1']],
+                true,
+            ],
 
-        yield [
-            'content/cat-1/cat-2/article-1',
-            false,
-            ['controller' => 'ArticleController', 'vars' => ['category' => 'cat-1/cat-2', 'article' => 'article-1']],
-            true,
-        ];
+            [
+                'content/cat-1/cat-2/article-1',
+                false,
+                ['controller' => 'ArticleController', 'vars' => ['category' => 'cat-1/cat-2', 'article' => 'article-1']],
+                true,
+            ],
 
-        yield [
-            'content/cat-1/cat-2/cat-3/article-1',
-            false,
-            ['controller' => 'ArticleController', 'vars' => ['category' => 'cat-1/cat-2/cat-3', 'article' => 'article-1']],
-            true,
-        ];
+            [
+                'content/cat-1/cat-2/cat-3/article-1',
+                false,
+                ['controller' => 'ArticleController', 'vars' => ['category' => 'cat-1/cat-2/cat-3', 'article' => 'article-1']],
+                true,
+            ],
 
-        yield [
-            'default_option/4',
-            false,
-            ['controller' => 'ArticleController', 'vars' => ['article_id' => 4, 'option' => 'content']],
-            true,
-        ];
+            [
+                'default_option/4',
+                false,
+                ['controller' => 'ArticleController', 'vars' => ['article_id' => 4, 'option' => 'content']],
+                true,
+            ],
 
-        yield [
-            'overriden_option/article/4',
-            false,
-            ['controller' => 'ArticleController', 'vars' => ['id' => 4, 'option' => 'content', 'view' => 'article']],
-            true,
+            [
+                'overriden_option/article/4',
+                false,
+                ['controller' => 'ArticleController', 'vars' => ['id' => 4, 'option' => 'content', 'view' => 'article']],
+                true,
+            ],
         ];
     }
 

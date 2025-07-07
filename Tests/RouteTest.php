@@ -9,7 +9,7 @@ namespace Joomla\Router\Tests;
 
 use Joomla\Router\Route;
 use PHPUnit\Framework\TestCase;
-use SuperClosure\SerializableClosure;
+use function Opis\Closure\{serialize, unserialize};
 
 /**
  * Tests for the Joomla\Router\Route class.
@@ -19,7 +19,7 @@ class RouteTest extends TestCase
     /**
      * @testdox  Ensure the Route is instantiated correctly.
      *
-     * @covers   Joomla\Router\Route
+     * @covers   Route
      */
     public function testInstantiationWithSingleSegmentRoute()
     {
@@ -37,7 +37,7 @@ class RouteTest extends TestCase
     /**
      * @testdox  Ensure the Route is instantiated correctly.
      *
-     * @covers   Joomla\Router\Route
+     * @covers   Route
      */
     public function testInstantiationWithMultiSegmentRouteWithVariable()
     {
@@ -55,7 +55,7 @@ class RouteTest extends TestCase
     /**
      * @testdox  A route with a string controller can be serialized
      *
-     * @covers   Joomla\Router\Route
+     * @covers   Route
      */
     public function testSerialization()
     {
@@ -77,7 +77,7 @@ class RouteTest extends TestCase
     /**
      * @testdox  A route with a Closure controller can be serialized
      *
-     * @covers   Joomla\Router\Route
+     * @covers   Route
      */
     public function testSerializationWithClosure()
     {
@@ -90,7 +90,6 @@ class RouteTest extends TestCase
 
         $this->assertSame(['GET'], $unserializedRoute->getMethods());
         $this->assertSame('/', $unserializedRoute->getPattern());
-        $this->assertInstanceOf(SerializableClosure::class, $unserializedRoute->getController());
         $this->assertSame([], $unserializedRoute->getRules());
         $this->assertSame(['_format' => 'html'], $unserializedRoute->getDefaults());
         $this->assertSame(\chr(1) . '^$' . \chr(1), $unserializedRoute->getRegex());
