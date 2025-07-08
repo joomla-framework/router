@@ -430,7 +430,7 @@ class RouterTest extends TestCase
             ],
 
             [
-                'overriden_option/article/4',
+                'overridden_option/article/4',
                 false,
                 ['controller' => 'ArticleController', 'vars' => ['id' => 4, 'option' => 'content', 'view' => 'article']],
                 true,
@@ -487,7 +487,7 @@ class RouterTest extends TestCase
                     ],
                 ],
                 [
-                    'pattern'    => 'overriden_option/:view/:id',
+                    'pattern'    => 'overridden_option/:view/:id',
                     'controller' => 'ArticleController',
                     'defaults'   => [
                         'option' => 'content',
