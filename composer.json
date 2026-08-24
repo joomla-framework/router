@@ -11,8 +11,8 @@
     "require-dev": {
         "opis/closure": "^4.3.1",
         "joomla/console": "^4.0",
-        "phpunit/phpunit": "^12.2.6",
-        "squizlabs/php_codesniffer": "^3.7.2",
+        "phpunit/phpunit": "^12.5 || ^13.0",
+        "squizlabs/php_codesniffer": "^4.0",
         "phpstan/phpstan": "^2.1.17",
         "phpstan/phpstan-deprecation-rules": "^2.0.3"
     },
