@@ -121,7 +121,7 @@ class Router implements RouterInterface, \Serializable
         $method = strtoupper($method);
 
         // Get the path from the route and remove and leading or trailing slash.
-        $route = trim(parse_url($route, PHP_URL_PATH), ' /');
+        $route = trim(self::extractPath((string) $route), ' /');
 
         // Iterate through all of the known routes looking for a match.
         foreach ($this->routes as $rule) {
@@ -147,6 +147,29 @@ class Router implements RouterInterface, \Serializable
         }
 
         throw new Exception\RouteNotFoundException(sprintf('Unable to handle request for route `%s`.', $route), 404);
+    }
+
+    /**
+     * Extract the path from a route, i.e. remove the query and fragment, and reduce an absolute URL to its path.
+     *
+     * The route is not run through parse_url() as a whole: paths like `page:2` or `page:abc` are not URLs and parse_url()
+     * misreads them as host and port or as scheme and path.
+     *
+     * @param   string  $route  The route
+     *
+     * @return  string
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    private static function extractPath(string $route): string
+    {
+        $route = substr($route, 0, strcspn($route, '?#'));
+
+        if (preg_match('#^[a-z][a-z0-9+.-]*://#i', $route)) {
+            $route = (string) parse_url($route, PHP_URL_PATH);
+        }
+
+        return $route;
     }
 
     /**

@@ -104,7 +104,15 @@ class Route implements \Serializable
     protected function buildRegexAndVarList(): void
     {
         // Sanitize and explode the pattern.
-        $pattern = explode('/', trim(parse_url($this->getPattern(), PHP_URL_PATH), ' /'));
+        $pattern = $this->getPattern();
+        $pattern = substr($pattern, 0, strcspn($pattern, '?#'));
+
+        // Only an absolute URL is reduced to its path; a pattern like `page:2` is not a URL.
+        if (preg_match('#^[a-z][a-z0-9+.-]*://#i', $pattern)) {
+            $pattern = (string) parse_url($pattern, PHP_URL_PATH);
+        }
+
+        $pattern = explode('/', trim($pattern, ' /'));
 
         // Prepare the route variables
         $vars = [];

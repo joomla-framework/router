@@ -314,6 +314,65 @@ class RouterTest extends TestCase
     }
 
     /**
+     * @testdox  The path is extracted from the route without misreading colons as scheme or port
+     *
+     * @param    string  $route       The route to parse
+     * @param    string  $controller  The expected controller
+     *
+     * @covers   Router
+     * @uses     \Joomla\Router\ResolvedRoute
+     * @uses     Route
+     */
+    #[DataProvider('seedTestParseRouteExtractsPath')]
+    public function testParseRouteExtractsPath(string $route, string $controller)
+    {
+        $this->instance->get('/', 'RootController');
+        $this->instance->get('abc', 'AbcController');
+        $this->instance->get('page:2', 'PageTwoController');
+        $this->instance->get('page:abc', 'PageAbcController');
+        $this->instance->get('a:b/c', 'ColonController');
+        $this->instance->get('articles', 'ArticlesController');
+
+        $deprecations = [];
+
+        set_error_handler(
+            static function (int $errno, string $errstr) use (&$deprecations): bool {
+                $deprecations[] = $errstr;
+
+                return true;
+            },
+            E_DEPRECATED
+        );
+
+        try {
+            $resolved = $this->instance->parseRoute($route);
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertSame($controller, $resolved->getController());
+        $this->assertSame([], $deprecations);
+    }
+
+    /**
+     * Provides test data for the testParseRouteExtractsPath method.
+     *
+     * @return  array
+     */
+    public static function seedTestParseRouteExtractsPath(): array
+    {
+        return [
+            'colon and digits'            => ['page:2', 'PageTwoController'],
+            'colon and letters'           => ['/page:abc', 'PageAbcController'],
+            'colon in the first segment'  => ['a:b/c', 'ColonController'],
+            'query and fragment'          => ['/articles?page=2#top', 'ArticlesController'],
+            'fragment only'               => ['articles#top', 'ArticlesController'],
+            'absolute URL'                => ['https://example.com/articles?page=2', 'ArticlesController'],
+            'empty path'                  => ['?page=2', 'RootController'],
+        ];
+    }
+
+    /**
      * @testdox  Ensure the Router parses routes.
      *
      * @param    string   $r  The route to parse.

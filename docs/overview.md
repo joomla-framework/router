@@ -58,6 +58,10 @@ print_r($match);
 // )
 ```
 
+`parseRoute()` matches the path only: a query string and a fragment are removed (`/user/123?tab=posts#top` is matched as
+`user/123`), as are leading and trailing slashes. Colons are part of the path, so `page:2` is matched as the path `page:2`.
+An absolute URL such as `https://example.com/user/123` is reduced to its path.
+
 At this point, you can do whatever you want with the returned data. It's up to you to instantiate your controller, or just use
 `call_user_func_array($matched['controller'], $matched['vars'])` in your FrontController if you're using the Router as the backbone
 for a micro framework. It's completely flexible.
