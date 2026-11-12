@@ -125,7 +125,16 @@ class Router implements RouterInterface, \Serializable
 
         // Iterate through all of the known routes looking for a match.
         foreach ($this->routes as $rule) {
-            if (preg_match($rule->getRegex(), $route, $matches)) {
+            $result = preg_match($rule->getRegex(), $route, $matches);
+
+            // An error (e.g. the backtrack limit) must not let the request fall through to a later route
+            if ($result === false) {
+                throw new \RuntimeException(
+                    sprintf('Unable to match route `%s` against the pattern `%s`: %s', $route, $rule->getPattern(), preg_last_error_msg())
+                );
+            }
+
+            if ($result) {
                 // Check if the route supports this method
                 if (!empty($rule->getMethods()) && !\in_array($method, $rule->getMethods())) {
                     throw new Exception\MethodNotAllowedException(

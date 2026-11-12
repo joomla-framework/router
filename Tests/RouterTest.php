@@ -346,6 +346,57 @@ class RouterTest extends TestCase
     }
 
     /**
+     * @testdox  A rule that cannot be compiled is reported instead of skipping the route
+     *
+     * @param    string  $rule  The invalid rule
+     *
+     * @covers   Router
+     * @uses     Route
+     */
+    #[DataProvider('seedTestParseRouteWithInvalidRule')]
+    public function testParseRouteWithInvalidRule(string $rule)
+    {
+        $this->instance->get('x/:id', 'Controller', ['id' => $rule]);
+        $this->instance->all('*', 'FallbackController');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The route pattern "x/:id" cannot be compiled to a regular expression');
+
+        $this->instance->parseRoute('x/1');
+    }
+
+    /**
+     * Provides test data for the testParseRouteWithInvalidRule method.
+     *
+     * @return  array
+     */
+    public static function seedTestParseRouteWithInvalidRule(): array
+    {
+        return [
+            'unterminated character class' => ['['],
+            'regex delimiter'              => ['a' . \chr(1)],
+        ];
+    }
+
+    /**
+     * @testdox  A regex error while matching is reported instead of falling through to a later route
+     *
+     * @covers   Router
+     * @uses     Route
+     */
+    public function testParseRouteWithRegexError()
+    {
+        // Nested quantifiers backtrack exponentially when the path does not match
+        $this->instance->get('x/:id', 'Controller', ['id' => '(a+)+b']);
+        $this->instance->all('*', 'FallbackController');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unable to match route `x/' . str_repeat('a', 30) . 'cb` against the pattern `x/:id`');
+
+        $this->instance->parseRoute('x/' . str_repeat('a', 30) . 'cb');
+    }
+
+    /**
      * @testdox  Ensure the Router handles a method not allowed error correctly.
      *
      * @covers   Router
