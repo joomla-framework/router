@@ -364,6 +364,45 @@ class RouterTest extends TestCase
     }
 
     /**
+     * @testdox  A pattern registered separately for several methods is routed for each of them
+     *
+     * @covers   Router
+     * @uses     Route
+     */
+    public function testParseRouteWithSamePatternForDifferentMethods()
+    {
+        $this->instance->get('articles', 'ListController');
+        $this->instance->post('articles', 'CreateController');
+
+        $this->assertSame('ListController', $this->instance->parseRoute('articles', 'GET')->getController());
+        $this->assertSame('CreateController', $this->instance->parseRoute('articles', 'POST')->getController());
+    }
+
+    /**
+     * @testdox  A method not allowed error lists the methods of all routes matching the pattern
+     *
+     * @covers   Router
+     * @uses     \Joomla\Router\Exception\MethodNotAllowedException
+     * @uses     Route
+     */
+    public function testParseRouteWithMethodNotAllowedErrorListsAllAllowedMethods()
+    {
+        $this->instance->get('articles', 'ListController');
+        $this->instance->post('articles', 'CreateController');
+        $this->instance->addRoute(new Route(['GET', 'PUT'], 'articles', 'UpdateController'));
+
+        try {
+            $this->instance->parseRoute('articles', 'DELETE');
+
+            $this->fail('A MethodNotAllowedException should be thrown');
+        } catch (MethodNotAllowedException $e) {
+            $this->assertSame(['GET', 'POST', 'PUT'], $e->getAllowedMethods());
+            $this->assertSame('Route `articles` does not support `DELETE` requests.', $e->getMessage());
+            $this->assertSame(405, $e->getCode());
+        }
+    }
+
+    /**
      * @testdox  The router can be serialized
      *
      * @covers   Router
