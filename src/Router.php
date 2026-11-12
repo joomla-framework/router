@@ -139,7 +139,8 @@ class Router implements RouterInterface, \Serializable
                 $vars = $rule->getDefaults();
 
                 foreach ($rule->getRouteVariables() as $i => $var) {
-                    $vars[$var] = $matches[$i + 1];
+                    // Regexes built before the variables were captured in named groups are matched by position
+                    $vars[$var] = $matches['var' . $i] ?? $matches[$i + 1];
                 }
 
                 return new ResolvedRoute($rule->getController(), $vars, $route);

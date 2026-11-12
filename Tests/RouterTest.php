@@ -497,4 +497,57 @@ class RouterTest extends TestCase
             ]
         );
     }
+
+    /**
+     * @testdox  Capturing groups in a rule do not shift the following route variables
+     *
+     * @param    string  $pattern   The route pattern
+     * @param    array   $rules     The rules for the route variables
+     * @param    string  $route     The route to parse
+     * @param    array   $expected  The expected route variables
+     *
+     * @covers   Router
+     * @uses     \Joomla\Router\ResolvedRoute
+     * @uses     Route
+     */
+    #[DataProvider('seedTestParseRouteWithCapturingGroups')]
+    public function testParseRouteWithCapturingGroups(string $pattern, array $rules, string $route, array $expected)
+    {
+        $this->instance->get($pattern, 'Controller', $rules);
+
+        $this->assertSame($expected, $this->instance->parseRoute($route)->getRouteVariables());
+    }
+
+    /**
+     * Provides test data for the testParseRouteWithCapturingGroups method.
+     *
+     * @return  array
+     */
+    public static function seedTestParseRouteWithCapturingGroups(): array
+    {
+        return [
+            'rule with two groups'          => [':id/:slug', ['id' => '(\d+)-(\d+)'], '12-34/hello', ['id' => '12-34', 'slug' => 'hello']],
+            'rule wrapped in a group'       => ['requests/:id/:action', ['id' => '(\d+)'], 'requests/5/edit', ['id' => '5', 'action' => 'edit']],
+            'rule before a splat'           => [':year/*path', ['year' => '(\d{4})'], '2026/a/b', ['year' => '2026', 'path' => 'a/b']],
+            'unnamed variable before a var' => [':/:id', [], 'x/5', ['id' => '5']],
+        ];
+    }
+
+    /**
+     * @testdox  A route whose regex captures the variables by position is still parsed
+     *
+     * @covers   Router
+     * @uses     \Joomla\Router\ResolvedRoute
+     * @uses     Route
+     */
+    public function testParseRouteWithPositionalRegex()
+    {
+        $route = new Route(['GET'], 'page/:page', 'PageController');
+        $route->getRouteVariables();
+        $route->setRegex(\chr(1) . '^page/([^/]*)$' . \chr(1));
+
+        $this->instance->addRoute($route);
+
+        $this->assertSame(['page' => '3'], $this->instance->parseRoute('page/3')->getRouteVariables());
+    }
 }
