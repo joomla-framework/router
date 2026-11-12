@@ -380,6 +380,26 @@ class RouterTest extends TestCase
     }
 
     /**
+     * @testdox  A router with a Closure controller can be serialized with PHP's serialize()
+     *
+     * @covers   Router
+     * @uses     \Joomla\Router\ResolvedRoute
+     * @uses     Route
+     */
+    public function testSerializationWithClosure()
+    {
+        $this->instance->get('hello', static function (): string {
+            return 'Hello';
+        });
+
+        $unserializedRouter = unserialize(serialize($this->instance));
+        $controller         = $unserializedRouter->parseRoute('hello')->getController();
+
+        $this->assertInstanceOf(\Closure::class, $controller);
+        $this->assertSame('Hello', $controller());
+    }
+
+    /**
      * Provides test data for the testParseRoute method.
      *
      * @return  array

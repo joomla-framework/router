@@ -4,3 +4,4 @@
 * [Updating from v3 to v4](v3-to-v4-update.md)
 * [Custom Variables](custom-vars.md)
 * [joomla/console Integration](console-integration.md)
+* [Serializing the Router](serialization.md)
