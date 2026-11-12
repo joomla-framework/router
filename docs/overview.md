@@ -28,6 +28,11 @@ By default, named variables in the defined route have a matching regex of `([^/]
 You can optionally define the exact regex to use, by passing a third parameter to the `addMaps` function. This is an associative array using
 the named variables as the keys and the desired regex as the values.
 
+The pattern and its rules are compiled to a regular expression the first time the route is matched. A rule that is not a valid
+regular expression throws an `InvalidArgumentException` at that point, and an error while matching a path (for example a rule with
+nested quantifiers that exhausts the PCRE backtrack limit) throws a `RuntimeException` from `parseRoute()`. Neither is treated as
+"no match", so a broken rule can not hand the request to a later route.
+
 ```php
 use Joomla\Router\Router;
 

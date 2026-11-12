@@ -143,7 +143,35 @@ class Route implements \Serializable
             }
         }
 
-        $this->setRegex(\chr(1) . '^' . implode('/', $regex) . '$' . \chr(1));
+        $regex = \chr(1) . '^' . implode('/', $regex) . '$' . \chr(1);
+        $error = null;
+
+        // Compile the regex once, so that an invalid rule is reported instead of never matching.
+        set_error_handler(
+            static function (int $errno, string $errstr) use (&$error): bool {
+                $error = $errstr;
+
+                return true;
+            }
+        );
+
+        try {
+            $valid = preg_match($regex, '') !== false;
+        } finally {
+            restore_error_handler();
+        }
+
+        if (!$valid) {
+            throw new \InvalidArgumentException(
+                \sprintf(
+                    'The route pattern "%s" cannot be compiled to a regular expression, check its rules: %s',
+                    $this->getPattern(),
+                    str_replace('preg_match(): ', '', $error ?? preg_last_error_msg())
+                )
+            );
+        }
+
+        $this->setRegex($regex);
         $this->setRouteVariables($vars);
     }
 
