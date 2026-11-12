@@ -375,9 +375,10 @@ class Route implements \Serializable
      */
     public function __serialize()
     {
-        $controller = $this->getController();
+        $controller          = $this->getController();
+        $controllerIsClosure = $controller instanceof \Closure;
 
-        if ($controller instanceof \Closure) {
+        if ($controllerIsClosure) {
             if (!function_exists('\Opis\Closure\serialize')) {
                 throw new \RuntimeException(
                     \sprintf(
@@ -387,16 +388,20 @@ class Route implements \Serializable
                     )
                 );
             }
+
+            // PHP cannot serialize a Closure itself, so store the string created by opis/closure instead
+            $controller = \Opis\Closure\serialize($controller);
         }
 
         return [
-            'controller'     => $controller,
-            'defaults'       => $this->getDefaults(),
-            'methods'        => $this->getMethods(),
-            'pattern'        => $this->getPattern(),
-            'regex'          => $this->getRegex(),
-            'routeVariables' => $this->getRouteVariables(),
-            'rules'          => $this->getRules(),
+            'controller'          => $controller,
+            'controllerIsClosure' => $controllerIsClosure,
+            'defaults'            => $this->getDefaults(),
+            'methods'             => $this->getMethods(),
+            'pattern'             => $this->getPattern(),
+            'regex'               => $this->getRegex(),
+            'routeVariables'      => $this->getRouteVariables(),
+            'rules'               => $this->getRules(),
         ];
     }
 
@@ -425,6 +430,20 @@ class Route implements \Serializable
      */
     public function __unserialize(array $data)
     {
+        if (!empty($data['controllerIsClosure'])) {
+            if (!function_exists('\Opis\Closure\unserialize')) {
+                throw new \RuntimeException(
+                    \sprintf(
+                        'Cannot unserialize the route for pattern "%s" because the controller is a Closure. '
+                        . 'Install the "opis/closure" package to unserialize Closures.',
+                        $data['pattern']
+                    )
+                );
+            }
+
+            $data['controller'] = \Opis\Closure\unserialize($data['controller']);
+        }
+
         $this->controller     = $data['controller'];
         $this->defaults       = $data['defaults'];
         $this->methods        = $data['methods'];
