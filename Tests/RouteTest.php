@@ -95,4 +95,26 @@ class RouteTest extends TestCase
         $this->assertSame(\chr(1) . '^$' . \chr(1), $unserializedRoute->getRegex());
         $this->assertSame([], $unserializedRoute->getRouteVariables());
     }
+
+    /**
+     * @testdox  A route with a Closure controller can be serialized with PHP's serialize()
+     *
+     * @covers   Route
+     */
+    public function testNativeSerializationWithClosure()
+    {
+        $controller = static function (string $value): string {
+            return 'Hello ' . $value;
+        };
+
+        $route = new Route(['GET'], 'hello/:name', $controller);
+
+        $unserializedRoute = \unserialize(\serialize($route));
+
+        $this->assertInstanceOf(\Closure::class, $unserializedRoute->getController());
+        $this->assertSame('Hello World', ($unserializedRoute->getController())('World'));
+        $this->assertSame(['GET'], $unserializedRoute->getMethods());
+        $this->assertSame('hello/:name', $unserializedRoute->getPattern());
+        $this->assertSame(['name'], $unserializedRoute->getRouteVariables());
+    }
 }

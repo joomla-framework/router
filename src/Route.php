@@ -359,10 +359,18 @@ class Route implements \Serializable
      *
      * @return  string  The serialized route.
      *
-     * @since   2.0.0
+     * @since       2.0.0
+     * @deprecated  5.0 Will be removed with the \Serializable interface, use serialize() on the object instead
      */
     public function serialize()
     {
+        trigger_deprecation(
+            'joomla/router',
+            '__DEPLOY_VERSION__',
+            '%s() is deprecated and will be removed in 5.0, use serialize() on the object instead.',
+            __METHOD__
+        );
+
         return serialize($this->__serialize());
     }
 
@@ -375,9 +383,10 @@ class Route implements \Serializable
      */
     public function __serialize()
     {
-        $controller = $this->getController();
+        $controller          = $this->getController();
+        $controllerIsClosure = $controller instanceof \Closure;
 
-        if ($controller instanceof \Closure) {
+        if ($controllerIsClosure) {
             if (!function_exists('\Opis\Closure\serialize')) {
                 throw new \RuntimeException(
                     \sprintf(
@@ -387,16 +396,20 @@ class Route implements \Serializable
                     )
                 );
             }
+
+            // PHP cannot serialize a Closure itself, so store the string created by opis/closure instead
+            $controller = \Opis\Closure\serialize($controller);
         }
 
         return [
-            'controller'     => $controller,
-            'defaults'       => $this->getDefaults(),
-            'methods'        => $this->getMethods(),
-            'pattern'        => $this->getPattern(),
-            'regex'          => $this->getRegex(),
-            'routeVariables' => $this->getRouteVariables(),
-            'rules'          => $this->getRules(),
+            'controller'          => $controller,
+            'controllerIsClosure' => $controllerIsClosure,
+            'defaults'            => $this->getDefaults(),
+            'methods'             => $this->getMethods(),
+            'pattern'             => $this->getPattern(),
+            'regex'               => $this->getRegex(),
+            'routeVariables'      => $this->getRouteVariables(),
+            'rules'               => $this->getRules(),
         ];
     }
 
@@ -407,10 +420,18 @@ class Route implements \Serializable
      *
      * @return  void
      *
-     * @since   1.0
+     * @since       1.0
+     * @deprecated  5.0 Will be removed with the \Serializable interface, use unserialize() on the serialized string instead
      */
     public function unserialize($serialized)
     {
+        trigger_deprecation(
+            'joomla/router',
+            '__DEPLOY_VERSION__',
+            '%s() is deprecated and will be removed in 5.0, use unserialize() on the serialized string instead.',
+            __METHOD__
+        );
+
         $this->__unserialize(unserialize($serialized));
     }
 
@@ -425,6 +446,20 @@ class Route implements \Serializable
      */
     public function __unserialize(array $data)
     {
+        if (!empty($data['controllerIsClosure'])) {
+            if (!function_exists('\Opis\Closure\unserialize')) {
+                throw new \RuntimeException(
+                    \sprintf(
+                        'Cannot unserialize the route for pattern "%s" because the controller is a Closure. '
+                        . 'Install the "opis/closure" package to unserialize Closures.',
+                        $data['pattern']
+                    )
+                );
+            }
+
+            $data['controller'] = \Opis\Closure\unserialize($data['controller']);
+        }
+
         $this->controller     = $data['controller'];
         $this->defaults       = $data['defaults'];
         $this->methods        = $data['methods'];
