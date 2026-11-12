@@ -400,6 +400,40 @@ class RouterTest extends TestCase
     }
 
     /**
+     * @testdox  The Serializable methods trigger a deprecation
+     *
+     * @covers   Router
+     * @uses     Route
+     */
+    public function testSerializableMethodsAreDeprecated()
+    {
+        $this->setRoutes();
+
+        $deprecations = [];
+
+        set_error_handler(
+            static function (int $errno, string $errstr) use (&$deprecations): bool {
+                $deprecations[] = $errstr;
+
+                return true;
+            },
+            E_USER_DEPRECATED
+        );
+
+        try {
+            $router = new Router();
+            $router->unserialize($this->instance->serialize());
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertEquals($this->instance->getRoutes(), $router->getRoutes());
+        $this->assertCount(2, $deprecations);
+        $this->assertStringContainsString('Router::serialize() is deprecated', $deprecations[0]);
+        $this->assertStringContainsString('Router::unserialize() is deprecated', $deprecations[1]);
+    }
+
+    /**
      * Provides test data for the testParseRoute method.
      *
      * @return  array

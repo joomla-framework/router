@@ -307,10 +307,18 @@ class Router implements RouterInterface, \Serializable
      *
      * @return  string  The serialized router.
      *
-     * @since   2.0.0
+     * @since       2.0.0
+     * @deprecated  5.0 Will be removed with the \Serializable interface, use serialize() on the object instead
      */
     public function serialize()
     {
+        trigger_deprecation(
+            'joomla/router',
+            '__DEPLOY_VERSION__',
+            '%s() is deprecated and will be removed in 5.0, use serialize() on the object instead.',
+            __METHOD__
+        );
+
         return serialize($this->__serialize());
     }
 
@@ -335,10 +343,18 @@ class Router implements RouterInterface, \Serializable
      *
      * @return  void
      *
-     * @since   2.0.0
+     * @since       2.0.0
+     * @deprecated  5.0 Will be removed with the \Serializable interface, use unserialize() on the serialized string instead
      */
     public function unserialize($serialized)
     {
+        trigger_deprecation(
+            'joomla/router',
+            '__DEPLOY_VERSION__',
+            '%s() is deprecated and will be removed in 5.0, use unserialize() on the serialized string instead.',
+            __METHOD__
+        );
+
         $this->__unserialize(unserialize($serialized));
     }
 
