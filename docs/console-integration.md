@@ -36,3 +36,7 @@ By default, the command does not list information about a route's controller. Yo
 ```bash
 php /path/to/console.php debug:router --show-controllers
 ```
+
+Functions are shown with parentheses (`strlen()`), methods as `Class::method()`, invokable objects as `Class::__invoke()` and
+Closures as `Closure()`. A controller given as a class name is shown as the class name, and any other value (for example a
+service ID) is shown as it is.

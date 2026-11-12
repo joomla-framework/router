@@ -119,4 +119,41 @@ class DebugRouterCommandTest extends TestCase
         $this->assertStringContainsString('user/:name/:id', $screenOutput);
         $this->assertStringContainsString('UserController', $screenOutput);
     }
+
+    /**
+     * @testdox  Controllers that are class names or not callable are displayed as they are
+     *
+     * @covers   Joomla\Router\Command\DebugRouterCommand
+     * @uses     Joomla\Router\Route
+     * @uses     Joomla\Router\Router
+     */
+    public function testControllersThatAreNotFunctionsAreDisplayed()
+    {
+        $router = new Router();
+        $router->get('class', Router::class);
+        $router->get('function', 'strlen');
+        $router->get('service', 42);
+
+        $input  = new ArrayInput(
+            [
+                'command'            => 'debug:router',
+                '--show-controllers' => true,
+            ]
+        );
+        $output = new BufferedOutput();
+
+        $application = new Application($input, $output);
+
+        $command = new DebugRouterCommand($router);
+        $command->setApplication($application);
+
+        $this->assertSame(0, $command->execute($input, $output));
+
+        $screenOutput = $output->fetch();
+
+        $this->assertMatchesRegularExpression('/class\s+N\/A\s+' . preg_quote(Router::class, '/') . '\s/', $screenOutput);
+        $this->assertStringNotContainsString(Router::class . '()', $screenOutput);
+        $this->assertStringContainsString('strlen()', $screenOutput);
+        $this->assertMatchesRegularExpression('/service\s+N\/A\s+42\s/', $screenOutput);
+    }
 }
