@@ -119,9 +119,9 @@ class Route implements \Serializable
                 $regex[] = '.*';
             } elseif (isset($segment[0]) && $segment[0] == '*') {
                 // Match a splat and capture the data to a named variable.
+                $regex[] = '(?P<var' . \count($vars) . '>.*)';
                 $vars[]  = substr($segment, 1);
-                $regex[] = '(.*)';
-            } elseif (isset($segment[0]) && $segment[0] == '\\' && $segment[1] == '*') {
+            } elseif (str_starts_with($segment, '\\*')) {
                 // Match an escaped splat segment.
                 $regex[] = '\*' . preg_quote(substr($segment, 2));
             } elseif ($segment == ':') {
@@ -130,11 +130,13 @@ class Route implements \Serializable
             } elseif (isset($segment[0]) && $segment[0] == ':') {
                 // Match a named variable and capture the data.
                 $varName = substr($segment, 1);
-                $vars[]  = $varName;
 
-                // Use the regex in the rules array if it has been defined.
-                $regex[] = array_key_exists($varName, $this->getRules()) ? '(' . $this->getRules()[$varName] . ')' : '([^/]*)';
-            } elseif (isset($segment[0]) && $segment[0] == '\\' && $segment[1] == ':') {
+                // Use the regex in the rules array if it has been defined. The group is named, so that capturing groups in a rule
+                // do not shift the following variables.
+                $regex[] = '(?P<var' . \count($vars) . '>'
+                    . (array_key_exists($varName, $this->getRules()) ? $this->getRules()[$varName] : '[^/]*') . ')';
+                $vars[]  = $varName;
+            } elseif (str_starts_with($segment, '\\:')) {
                 // Match a segment with an escaped variable character prefix.
                 $regex[] = preg_quote(substr($segment, 1));
             } else {

@@ -48,8 +48,40 @@ class RouteTest extends TestCase
         $this->assertSame('page', $route->getController());
         $this->assertSame([], $route->getRules());
         $this->assertSame(['_format' => 'html'], $route->getDefaults());
-        $this->assertSame(\chr(1) . '^page/([^/]*)$' . \chr(1), $route->getRegex());
+        $this->assertSame(\chr(1) . '^page/(?P<var0>[^/]*)$' . \chr(1), $route->getRegex());
         $this->assertSame(['page'], $route->getRouteVariables());
+    }
+
+    /**
+     * @testdox  Segments starting with a backslash are matched literally without warnings
+     *
+     * @covers   Route
+     */
+    public function testBackslashSegments()
+    {
+        $backslash = \chr(92);
+        $errors    = [];
+
+        set_error_handler(
+            static function (int $errno, string $errstr) use (&$errors): bool {
+                $errors[] = $errstr;
+
+                return true;
+            }
+        );
+
+        try {
+            $loneBackslash = (new Route(['GET'], 'a/' . $backslash, 'a'))->getRegex();
+            $escapedSplat  = (new Route(['GET'], 'a/' . $backslash . '*b', 'a'))->getRegex();
+            $escapedVar    = (new Route(['GET'], 'a/' . $backslash . ':id', 'a'))->getRegex();
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertSame([], $errors, 'Building the regex should not raise warnings');
+        $this->assertSame(1, preg_match($loneBackslash, 'a/' . $backslash));
+        $this->assertSame(1, preg_match($escapedSplat, 'a/*b'));
+        $this->assertSame(1, preg_match($escapedVar, 'a/:id'));
     }
 
     /**

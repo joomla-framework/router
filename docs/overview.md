@@ -24,7 +24,7 @@ function get_user($id)
 }
 ```
 
-By default, named variables in the defined route have a matching regex of `([^/]*)`, which matches everything in a route, up to the next `/`.
+By default, named variables in the defined route have a matching regex of `[^/]*`, which matches everything in a route, up to the next `/`.
 You can optionally define the exact regex to use, by passing a third parameter to the `addMaps` function. This is an associative array using
 the named variables as the keys and the desired regex as the values.
 
@@ -41,6 +41,10 @@ $router->addRoute(
     )
 );
 ```
+
+Each variable is captured in its own named group, so a rule may contain capturing groups of its own (like `(\d+)` above, or
+`(\d+)-(\d+)`) without affecting the values of the other variables. The value of the variable is always the whole text matched by
+its rule.
 
 If you were to take the above code, and match it against a path of `/user/123`, you would receive the following array back.
 
