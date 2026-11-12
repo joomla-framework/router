@@ -25,6 +25,22 @@ class Router implements RouterInterface, \Serializable
     protected $routes = [];
 
     /**
+     * Whether the values of route variables are URL-decoded.
+     *
+     * @var    boolean
+     * @since  __DEPLOY_VERSION__
+     */
+    private bool $decodeRouteVariables = false;
+
+    /**
+     * Whether HEAD requests are served by GET routes when no route supports HEAD.
+     *
+     * @var    boolean
+     * @since  __DEPLOY_VERSION__
+     */
+    private bool $serveHeadWithGet = false;
+
+    /**
      * Constructor.
      *
      * @param   Route[]|array[]  $routes  A list of route maps or Route objects to add to the router.
@@ -105,6 +121,44 @@ class Router implements RouterInterface, \Serializable
     }
 
     /**
+     * Set whether the values of route variables are URL-decoded with rawurldecode().
+     *
+     * By default, the values are returned as they appear in the path, e.g. `foo%20bar`. Note that a decoded value can contain a
+     * `/` that was encoded as `%2F` in the path.
+     *
+     * @param   bool  $decode  True to decode the values of route variables
+     *
+     * @return  $this
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    public function setDecodeRouteVariables(bool $decode): self
+    {
+        $this->decodeRouteVariables = $decode;
+
+        return $this;
+    }
+
+    /**
+     * Set whether HEAD requests are served by GET routes.
+     *
+     * When enabled, a HEAD request for a path that has no route supporting HEAD is resolved to the route that would handle a GET
+     * request. Routes that support HEAD explicitly are still preferred.
+     *
+     * @param   bool  $serve  True to serve HEAD requests with GET routes
+     *
+     * @return  $this
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    public function setServeHeadWithGet(bool $serve): self
+    {
+        $this->serveHeadWithGet = $serve;
+
+        return $this;
+    }
+
+    /**
      * Parse the given route and return the information about the route, including the controller assigned to the route.
      *
      * @param   string  $route   The route string for which to find and execute a controller.
@@ -123,16 +177,18 @@ class Router implements RouterInterface, \Serializable
         // Get the path from the route and remove and leading or trailing slash.
         $route = trim(parse_url($route, PHP_URL_PATH), ' /');
 
+        // Methods allowed by the routes whose pattern matches but which do not support the request method
+        $allowedMethods = [];
+
         // Iterate through all of the known routes looking for a match.
         foreach ($this->routes as $rule) {
             if (preg_match($rule->getRegex(), $route, $matches)) {
                 // Check if the route supports this method
                 if (!empty($rule->getMethods()) && !\in_array($method, $rule->getMethods())) {
-                    throw new Exception\MethodNotAllowedException(
-                        array_unique($rule->getMethods()),
-                        sprintf('Route `%s` does not support `%s` requests.', $route, strtoupper($method)),
-                        405
-                    );
+                    // Remember the allowed methods and keep looking for a route that supports the method
+                    $allowedMethods = array_merge($allowedMethods, $rule->getMethods());
+
+                    continue;
                 }
 
                 // If we have gotten this far then we have a positive match.
@@ -142,8 +198,31 @@ class Router implements RouterInterface, \Serializable
                     $vars[$var] = $matches[$i + 1];
                 }
 
+                if ($this->decodeRouteVariables) {
+                    foreach ($rule->getRouteVariables() as $var) {
+                        $vars[$var] = rawurldecode($vars[$var]);
+                    }
+                }
+
                 return new ResolvedRoute($rule->getController(), $vars, $route);
             }
+        }
+
+        if ($allowedMethods) {
+            if ($this->serveHeadWithGet && \in_array('GET', $allowedMethods, true)) {
+                // A HEAD request is answered like a GET request (RFC 9110, section 9.3.2)
+                if ($method === 'HEAD') {
+                    return $this->parseRoute($route, 'GET');
+                }
+
+                $allowedMethods[] = 'HEAD';
+            }
+
+            throw new Exception\MethodNotAllowedException(
+                array_values(array_unique($allowedMethods)),
+                sprintf('Route `%s` does not support `%s` requests.', $route, $method),
+                405
+            );
         }
 
         throw new Exception\RouteNotFoundException(sprintf('Unable to handle request for route `%s`.', $route), 404);
@@ -324,7 +403,9 @@ class Router implements RouterInterface, \Serializable
     public function __serialize()
     {
         return [
-            'routes' => $this->routes,
+            'routes'               => $this->routes,
+            'decodeRouteVariables' => $this->decodeRouteVariables,
+            'serveHeadWithGet'     => $this->serveHeadWithGet,
         ];
     }
 
@@ -353,6 +434,8 @@ class Router implements RouterInterface, \Serializable
      */
     public function __unserialize(array $data)
     {
-        $this->routes = $data['routes'];
+        $this->routes               = $data['routes'];
+        $this->decodeRouteVariables = $data['decodeRouteVariables'] ?? false;
+        $this->serveHeadWithGet     = $data['serveHeadWithGet'] ?? false;
     }
 }
