@@ -61,3 +61,21 @@ print_r($match);
 At this point, you can do whatever you want with the returned data. It's up to you to instantiate your controller, or just use
 `call_user_func_array($matched['controller'], $matched['vars'])` in your FrontController if you're using the Router as the backbone
 for a micro framework. It's completely flexible.
+
+### Request methods
+
+Each route lists the HTTP methods it supports (`get()`, `post()`, … register a single method, `all()` accepts any method).
+`parseRoute()` checks the routes in the order they were added and returns the first route whose pattern matches the path **and**
+which supports the request method. The same pattern can therefore be registered separately for several methods:
+
+```php
+$router->get('/articles', 'Acme\\ArticlesListController');
+$router->post('/articles', 'Acme\\ArticlesCreateController');
+
+$router->parseRoute('/articles', 'POST'); // Resolved to Acme\ArticlesCreateController
+```
+
+If at least one route matches the path but none of them supports the request method, a
+`Joomla\Router\Exception\MethodNotAllowedException` (code 405) is thrown. Its `getAllowedMethods()` returns the methods of all
+matching routes, e.g. `['GET', 'POST']` for a `DELETE` request in the example above, which can be used for the `Allow` response
+header. If no route matches the path at all, a `Joomla\Router\Exception\RouteNotFoundException` (code 404) is thrown.

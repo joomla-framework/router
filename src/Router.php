@@ -123,16 +123,18 @@ class Router implements RouterInterface, \Serializable
         // Get the path from the route and remove and leading or trailing slash.
         $route = trim(parse_url($route, PHP_URL_PATH), ' /');
 
+        // Methods allowed by the routes whose pattern matches but which do not support the request method
+        $allowedMethods = [];
+
         // Iterate through all of the known routes looking for a match.
         foreach ($this->routes as $rule) {
             if (preg_match($rule->getRegex(), $route, $matches)) {
                 // Check if the route supports this method
                 if (!empty($rule->getMethods()) && !\in_array($method, $rule->getMethods())) {
-                    throw new Exception\MethodNotAllowedException(
-                        array_unique($rule->getMethods()),
-                        sprintf('Route `%s` does not support `%s` requests.', $route, strtoupper($method)),
-                        405
-                    );
+                    // Remember the allowed methods and keep looking for a route that supports the method
+                    $allowedMethods = array_merge($allowedMethods, $rule->getMethods());
+
+                    continue;
                 }
 
                 // If we have gotten this far then we have a positive match.
@@ -144,6 +146,14 @@ class Router implements RouterInterface, \Serializable
 
                 return new ResolvedRoute($rule->getController(), $vars, $route);
             }
+        }
+
+        if ($allowedMethods) {
+            throw new Exception\MethodNotAllowedException(
+                array_values(array_unique($allowedMethods)),
+                sprintf('Route `%s` does not support `%s` requests.', $route, $method),
+                405
+            );
         }
 
         throw new Exception\RouteNotFoundException(sprintf('Unable to handle request for route `%s`.', $route), 404);
