@@ -79,3 +79,26 @@ If at least one route matches the path but none of them supports the request met
 `Joomla\Router\Exception\MethodNotAllowedException` (code 405) is thrown. Its `getAllowedMethods()` returns the methods of all
 matching routes, e.g. `['GET', 'POST']` for a `DELETE` request in the example above, which can be used for the `Allow` response
 header. If no route matches the path at all, a `Joomla\Router\Exception\RouteNotFoundException` (code 404) is thrown.
+
+By default, a HEAD request is only routed to routes that support HEAD. HTTP expects HEAD to be supported wherever GET is
+([RFC 9110, section 9.3.2](https://www.rfc-editor.org/rfc/rfc9110#section-9.3.2)); call `setServeHeadWithGet(true)` to resolve
+a HEAD request to the GET route when no route matching the path supports HEAD. A route registered for HEAD is still preferred,
+and the allowed methods of a `MethodNotAllowedException` then include `HEAD` wherever they include `GET`. The controller is
+responsible for not sending a response body.
+
+```php
+$router->setServeHeadWithGet(true);
+
+$router->parseRoute('/articles', 'HEAD'); // Resolved to Acme\ArticlesListController
+```
+
+### Decoding route variables
+
+The values of route variables are returned as they appear in the path, so `/tag/foo%20bar` gives `['tag' => 'foo%20bar']`. Call
+`setDecodeRouteVariables(true)` to decode them with `rawurldecode()` instead, which gives `['tag' => 'foo bar']`. Default values
+are not decoded. Decoding happens after matching, so a variable can then contain a `/` that was sent encoded as `%2F`; check
+the value if it is used as a path.
+
+```php
+$router->setDecodeRouteVariables(true);
+```

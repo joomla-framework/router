@@ -270,6 +270,87 @@ class RouterTest extends TestCase
     }
 
     /**
+     * @testdox  Route variables are only URL-decoded when enabled
+     *
+     * @covers   Router
+     * @uses     \Joomla\Router\ResolvedRoute
+     * @uses     Route
+     */
+    public function testDecodeRouteVariables()
+    {
+        $this->instance->get('tag/:tag', 'TagController', [], ['format' => 'a%20b']);
+
+        $this->assertSame(
+            ['format' => 'a%20b', 'tag' => 'foo%20bar'],
+            $this->instance->parseRoute('tag/foo%20bar')->getRouteVariables(),
+            'Route variables are not decoded by default'
+        );
+
+        $this->assertSame($this->instance, $this->instance->setDecodeRouteVariables(true), 'The setter has a fluent interface');
+
+        $this->assertSame(
+            ['format' => 'a%20b', 'tag' => 'foo bar'],
+            $this->instance->parseRoute('tag/foo%20bar')->getRouteVariables(),
+            'Route variables are decoded, defaults are not'
+        );
+
+        $this->assertSame(['format' => 'a%20b', 'tag' => 'a/b+c'], $this->instance->parseRoute('tag/a%2Fb+c')->getRouteVariables());
+    }
+
+    /**
+     * @testdox  HEAD requests are only served by GET routes when enabled
+     *
+     * @covers   Router
+     * @uses     \Joomla\Router\Exception\MethodNotAllowedException
+     * @uses     \Joomla\Router\ResolvedRoute
+     * @uses     Route
+     */
+    public function testServeHeadWithGet()
+    {
+        $this->instance->get('articles', 'ArticlesController');
+        $this->instance->get('info', 'InfoController');
+        $this->instance->head('info', 'InfoHeadController');
+
+        try {
+            $this->instance->parseRoute('articles', 'HEAD');
+
+            $this->fail('HEAD requests should not be served by GET routes by default');
+        } catch (MethodNotAllowedException $e) {
+            $this->assertSame(['GET'], $e->getAllowedMethods());
+        }
+
+        $this->assertSame($this->instance, $this->instance->setServeHeadWithGet(true), 'The setter has a fluent interface');
+
+        $this->assertSame('ArticlesController', $this->instance->parseRoute('articles', 'HEAD')->getController());
+        $this->assertSame('InfoHeadController', $this->instance->parseRoute('info', 'HEAD')->getController(), 'An explicit HEAD route wins');
+
+        try {
+            $this->instance->parseRoute('articles', 'POST');
+
+            $this->fail('POST requests should not be served by GET routes');
+        } catch (MethodNotAllowedException $e) {
+            $this->assertSame(['GET', 'HEAD'], $e->getAllowedMethods());
+        }
+    }
+
+    /**
+     * @testdox  The options survive serialization
+     *
+     * @covers   Router
+     * @uses     \Joomla\Router\ResolvedRoute
+     * @uses     Route
+     */
+    public function testOptionsAreSerialized()
+    {
+        $this->instance->get('tag/:tag', 'TagController');
+        $this->instance->setDecodeRouteVariables(true)->setServeHeadWithGet(true);
+
+        $router = unserialize(serialize($this->instance));
+
+        $this->assertSame(['tag' => 'foo bar'], $router->parseRoute('tag/foo%20bar', 'HEAD')->getRouteVariables());
+    }
+
+    /**
      * @testdox  Ensure several routes are added to the Router.
      *
      * @covers   Router
