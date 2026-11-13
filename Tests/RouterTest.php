@@ -9,8 +9,10 @@ namespace Joomla\Router\Tests;
 
 use Joomla\Router\Exception\MethodNotAllowedException;
 use Joomla\Router\Exception\RouteNotFoundException;
+use Joomla\Router\ResolvedRoute;
 use Joomla\Router\Route;
 use Joomla\Router\Router;
+use Joomla\Router\RouterInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -132,6 +134,22 @@ class RouterTest extends TestCase
             ],
             $this->instance->getRoutes()
         );
+    }
+
+    /**
+     * @testdox  parseRoute() has native parameter and return types
+     *
+     * @covers   Router
+     */
+    public function testParseRouteHasNativeTypes()
+    {
+        foreach ([Router::class, RouterInterface::class] as $class) {
+            $method = new \ReflectionMethod($class, 'parseRoute');
+
+            $this->assertSame('string', (string) $method->getParameters()[0]->getType(), $class);
+            $this->assertSame('string', (string) $method->getParameters()[1]->getType(), $class);
+            $this->assertSame(ResolvedRoute::class, (string) $method->getReturnType(), $class);
+        }
     }
 
     /**

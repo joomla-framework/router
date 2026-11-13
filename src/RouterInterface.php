@@ -60,7 +60,7 @@ interface RouterInterface
      * @throws  Exception\MethodNotAllowedException if the route was found but does not support the request method
      * @throws  Exception\RouteNotFoundException if the route was not found
      */
-    public function parseRoute($route, $method = 'GET');
+    public function parseRoute(string $route, string $method = 'GET'): ResolvedRoute;
 
     /**
      * Add a GET route to the router.
