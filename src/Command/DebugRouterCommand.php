@@ -150,7 +150,7 @@ EOF
     /**
      * Formats a callable resource to be displayed in the console output
      *
-     * @param   callable  $callable  A callable resource to format
+     * @param   mixed  $callable  A callable resource or other controller value to format
      *
      * @return  string
      *
@@ -169,6 +169,11 @@ EOF
         }
 
         if (\is_string($callable)) {
+            // A class name, e.g. of a controller the application instantiates, is not a function
+            if (class_exists($callable)) {
+                return $callable;
+            }
+
             return sprintf('%s()', $callable);
         }
 
@@ -186,11 +191,12 @@ EOF
             return $r->name . '()';
         }
 
-        if (method_exists($callable, '__invoke')) {
+        if (\is_object($callable) && method_exists($callable, '__invoke')) {
             return sprintf('%s::__invoke()', \get_class($callable));
         }
 
-        throw new \InvalidArgumentException('Callable is not describable.');
+        // Any other value, e.g. a service ID, is shown as it is
+        return $this->formatValue($callable);
     }
 
     /**
