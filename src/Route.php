@@ -9,14 +9,12 @@
 
 namespace Joomla\Router;
 
-use function Opis\Closure\{serialize, unserialize};
-
 /**
  * An object representing a route definition.
  *
  * @since  2.0.0
  */
-class Route implements \Serializable
+class Route
 {
     /**
      * The controller which handles this route
@@ -357,18 +355,6 @@ class Route implements \Serializable
     /**
      * Serialize the route.
      *
-     * @return  string  The serialized route.
-     *
-     * @since   2.0.0
-     */
-    public function serialize()
-    {
-        return serialize($this->__serialize());
-    }
-
-    /**
-     * Serialize the route.
-     *
      * @return  array  The data to be serialized
      *
      * @since   2.0.0
@@ -398,20 +384,6 @@ class Route implements \Serializable
             'routeVariables' => $this->getRouteVariables(),
             'rules'          => $this->getRules(),
         ];
-    }
-
-    /**
-     * Unserialize the route.
-     *
-     * @param   string  $serialized  The serialized route.
-     *
-     * @return  void
-     *
-     * @since   1.0
-     */
-    public function unserialize($serialized)
-    {
-        $this->__unserialize(unserialize($serialized));
     }
 
     /**
