@@ -95,4 +95,18 @@ class RouteTest extends TestCase
         $this->assertSame(\chr(1) . '^$' . \chr(1), $unserializedRoute->getRegex());
         $this->assertSame([], $unserializedRoute->getRouteVariables());
     }
+
+    /**
+     * @testdox  The route no longer implements the Serializable interface
+     *
+     * @covers   Route
+     */
+    public function testRouteIsNotSerializable()
+    {
+        $route = new Route(['GET'], 'login', 'login');
+
+        $this->assertNotInstanceOf(\Serializable::class, $route);
+        $this->assertFalse(method_exists($route, 'serialize'));
+        $this->assertFalse(method_exists($route, 'unserialize'));
+    }
 }

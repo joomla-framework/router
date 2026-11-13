@@ -14,7 +14,7 @@ namespace Joomla\Router;
  *
  * @since  1.0
  */
-class Router implements RouterInterface, \Serializable
+class Router implements RouterInterface
 {
     /**
      * An array of Route objects defining the supported paths.
@@ -305,18 +305,6 @@ class Router implements RouterInterface, \Serializable
     /**
      * Serialize the router.
      *
-     * @return  string  The serialized router.
-     *
-     * @since   2.0.0
-     */
-    public function serialize()
-    {
-        return serialize($this->__serialize());
-    }
-
-    /**
-     * Serialize the router.
-     *
      * @return  array  The data to be serialized
      *
      * @since   2.0.0
@@ -326,20 +314,6 @@ class Router implements RouterInterface, \Serializable
         return [
             'routes' => $this->routes,
         ];
-    }
-
-    /**
-     * Unserialize the router.
-     *
-     * @param   string  $serialized  The serialized router.
-     *
-     * @return  void
-     *
-     * @since   2.0.0
-     */
-    public function unserialize($serialized)
-    {
-        $this->__unserialize(unserialize($serialized));
     }
 
     /**

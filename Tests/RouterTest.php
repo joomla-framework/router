@@ -380,6 +380,18 @@ class RouterTest extends TestCase
     }
 
     /**
+     * @testdox  The router no longer implements the Serializable interface
+     *
+     * @covers   Router
+     */
+    public function testRouterIsNotSerializable()
+    {
+        $this->assertNotInstanceOf(\Serializable::class, $this->instance);
+        $this->assertFalse(method_exists($this->instance, 'serialize'));
+        $this->assertFalse(method_exists($this->instance, 'unserialize'));
+    }
+
+    /**
      * Provides test data for the testParseRoute method.
      *
      * @return  array
